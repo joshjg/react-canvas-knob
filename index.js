@@ -49,7 +49,10 @@ var Knob = function (_React$Component) {
     };
 
     _this.coerceToStep = function (v) {
-      var val = Math.max(Math.min(v, _this.props.max), _this.props.min) || _this.props.min;
+      var val = Math.max(Math.min(v, _this.props.max), _this.props.min);
+      if (isNaN(val)) {
+        val = 0;
+      }
       val = !_this.props.log ? ~~((val < 0 ? -0.5 : 0.5) + val / _this.props.step) * _this.props.step : Math.pow(_this.props.step, ~~((Math.abs(val) < 1 ? -0.5 : 0.5) + Math.log(val) / Math.log(_this.props.step)));
       return Math.round(val * 1000) / 1000;
     };
