@@ -38,6 +38,7 @@ class MyComponent extends React.Component {
 |`min`|min value|`0`|
 |`max`|max value|`100`|
 |`step`|step size|`1`|
+|`log`|enable logarithmic scale (must use non-zero `min` and `max`, `step` > 1)|`false`|
 |`width` or `height`|dimension of square (px)|`200`|
 |`thickness`|gauge thickness|`0.35`|
 |`lineCap`|gauge stroke ending style (`butt` or `round`)|`'butt'`|
