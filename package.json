@@ -1,7 +1,7 @@
 {
   "name": "react-canvas-knob",
   "version": "0.1.0",
-  "description": "HTML5 Canvas-based React component that serves as a circular range input",
+  "description": "HTML5 Canvas-based React knob/dial component",
   "main": "Knob.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
