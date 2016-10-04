@@ -56,8 +56,8 @@ var Knob = function (_React$Component) {
 
     _this.eventToValue = function (e) {
       var bounds = _this.canvasRef.getBoundingClientRect();
-      var x = e.pageX - bounds.left;
-      var y = e.pageY - bounds.top;
+      var x = e.clientX - bounds.left;
+      var y = e.clientY - bounds.top;
       var a = Math.atan2(x - _this.w / 2, _this.w / 2 - y) - _this.angleOffset;
       if (!_this.props.clockwise) {
         a = _this.angleArc - a - 2 * Math.PI;

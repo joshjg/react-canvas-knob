@@ -114,8 +114,8 @@ class Knob extends React.Component {
 
   eventToValue = (e) => {
     const bounds = this.canvasRef.getBoundingClientRect();
-    const x = e.pageX - bounds.left;
-    const y = e.pageY - bounds.top;
+    const x = e.clientX - bounds.left;
+    const y = e.clientY - bounds.top;
     let a = Math.atan2(x - (this.w / 2), (this.w / 2) - y) - this.angleOffset;
     if (!this.props.clockwise) {
       a = this.angleArc - a - (2 * Math.PI);
