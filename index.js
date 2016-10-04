@@ -68,7 +68,7 @@ var Knob = function (_React$Component) {
       var val = a * (_this.props.max - _this.props.min) / _this.angleArc + _this.props.min;
       val = Math.max(Math.min(val, _this.props.max), _this.props.min);
       val = ~~((val < 0 ? -0.5 : 0.5) + val / _this.props.step) * _this.props.step;
-      return Math.round(val * 100 / 100);
+      return Math.round(val * 100) / 100;
     };
 
     _this.handleMouseDown = function (e) {

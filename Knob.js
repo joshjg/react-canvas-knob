@@ -118,7 +118,7 @@ class Knob extends React.Component {
     let val = (a * (this.props.max - this.props.min) / this.angleArc) + this.props.min;
     val = Math.max(Math.min(val, this.props.max), this.props.min);
     val = (~~(((val < 0) ? -0.5 : 0.5) + (val / this.props.step))) * this.props.step;
-    return Math.round((val * 100) / 100);
+    return Math.round(val * 100) / 100;
   };
 
   handleMouseDown = (e) => {
