@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "https://github.com/joshjg/react-canvas-knob",
+  "repository": "git@github.com:joshjg/react-canvas-knob.git",
   "keywords": [
     "react",
     "canvas",
