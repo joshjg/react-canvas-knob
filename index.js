@@ -49,11 +49,11 @@ var Knob = function (_React$Component) {
     };
 
     _this.coerceToStep = function (v) {
-      var val = Math.max(Math.min(v, _this.props.max), _this.props.min);
+      var val = !_this.props.log ? ~~((v < 0 ? -0.5 : 0.5) + v / _this.props.step) * _this.props.step : Math.pow(_this.props.step, ~~((Math.abs(v) < 1 ? -0.5 : 0.5) + Math.log(v) / Math.log(_this.props.step)));
+      val = Math.max(Math.min(val, _this.props.max), _this.props.min);
       if (isNaN(val)) {
         val = 0;
       }
-      val = !_this.props.log ? ~~((val < 0 ? -0.5 : 0.5) + val / _this.props.step) * _this.props.step : Math.pow(_this.props.step, ~~((Math.abs(val) < 1 ? -0.5 : 0.5) + Math.log(val) / Math.log(_this.props.step)));
       return Math.round(val * 1000) / 1000;
     };
 
@@ -161,7 +161,7 @@ var Knob = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         {
-          style: { width: _this.w, height: _this.h },
+          style: { width: _this.w, height: _this.h, display: 'inline-block' },
           onWheel: _this.props.readOnly ? null : _this.handleWheel
         },
         _react2.default.createElement('canvas', {

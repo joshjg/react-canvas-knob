@@ -105,11 +105,11 @@ class Knob extends React.Component {
   };
 
   coerceToStep = (v) => {
-    let val = Math.max(Math.min(v, this.props.max), this.props.min);
+    let val = !this.props.log
+    ? (~~(((v < 0) ? -0.5 : 0.5) + (v / this.props.step))) * this.props.step
+    : Math.pow(this.props.step, ~~(((Math.abs(v) < 1) ? -0.5 : 0.5) + (Math.log(v) / Math.log(this.props.step))));
+    val = Math.max(Math.min(val, this.props.max), this.props.min);
     if (isNaN(val)) { val = 0; }
-    val = !this.props.log
-    ? (~~(((val < 0) ? -0.5 : 0.5) + (val / this.props.step))) * this.props.step
-    : Math.pow(this.props.step, ~~(((Math.abs(val) < 1) ? -0.5 : 0.5) + (Math.log(val) / Math.log(this.props.step))));
     return Math.round(val * 1000) / 1000;
   };
 
@@ -267,7 +267,7 @@ class Knob extends React.Component {
 
   render = () => (
     <div
-      style={{ width: this.w, height: this.h }}
+      style={{ width: this.w, height: this.h, display: 'inline-block' }}
       onWheel={this.props.readOnly ? null : this.handleWheel}
     >
       <canvas
