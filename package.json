@@ -4,6 +4,8 @@
   "description": "HTML5 Canvas-based React knob/dial component",
   "main": "index.js",
   "scripts": {
+    "start": "node_modules/webpack-dev-server/bin/webpack-dev-server.js --no-info",
+    "babel": "node_modules/babel-cli/lib/babel/index.js Knob.js -o index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "git@github.com:joshjg/react-canvas-knob.git",
@@ -20,10 +22,14 @@
     "url": "https://github.com/joshjg/react-canvas-knob"
   },
   "homepage": "https://github.com/joshjg/react-canvas-knob#readme",
+  "files": [
+    "index.js"
+  ],
   "devDependencies": {
     "babel-cli": "^6.16.0",
     "babel-core": "^6.16.0",
     "babel-eslint": "^6.1.2",
+    "babel-loader": "^6.2.5",
     "babel-plugin-react-transform": "^2.0.2",
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-react": "^6.16.0",
@@ -33,9 +39,14 @@
     "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-react": "^6.3.0",
+    "html-webpack-plugin": "^2.22.0",
+    "html-webpack-template": "^5.3.0",
+    "react-dom": "^15.3.2",
     "react-transform-catch-errors": "^1.0.2",
     "react-transform-hmr": "^1.0.4",
-    "redbox-react": "^1.3.1"
+    "redbox-react": "^1.3.1",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.1"
   },
   "peerDependencies": {
     "react": "^15.3.2"

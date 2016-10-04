@@ -7,6 +7,7 @@ class Knob extends React.Component {
     min: React.PropTypes.number,
     max: React.PropTypes.number,
     step: React.PropTypes.number,
+    log: React.PropTypes.bool,
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     thickness: React.PropTypes.number,
@@ -32,6 +33,7 @@ class Knob extends React.Component {
     min: 0,
     max: 100,
     step: 1,
+    log: false,
     width: 0, // actual default: width = height = 200px
     height: 0, // see `dimension` below
     thickness: 0.35,
@@ -81,7 +83,9 @@ class Knob extends React.Component {
   getArcToValue = (v) => {
     let startAngle;
     let endAngle;
-    const angle = ((v - this.props.min) * this.angleArc) / (this.props.max - this.props.min);
+    const angle = !this.props.log
+    ? ((v - this.props.min) * this.angleArc) / (this.props.max - this.props.min)
+    : Math.log(Math.pow((v / this.props.min), this.angleArc)) / Math.log(this.props.max / this.props.min);
     if (!this.props.clockwise) {
       startAngle = this.endAngle + 0.00001;
       endAngle = startAngle - angle - 0.00001;
@@ -100,7 +104,13 @@ class Knob extends React.Component {
     };
   };
 
-  enforceRange = (v) => ~~Math.max(Math.min(v, this.props.max), this.props.min);
+  coerceToStep = (v) => {
+    let val = Math.max(Math.min(v, this.props.max), this.props.min) || this.props.min;
+    val = !this.props.log
+    ? (~~(((val < 0) ? -0.5 : 0.5) + (val / this.props.step))) * this.props.step
+    : Math.pow(this.props.step, ~~(((Math.abs(val) < 1) ? -0.5 : 0.5) + (Math.log(val) / Math.log(this.props.step))));
+    return Math.round(val * 1000) / 1000;
+  };
 
   eventToValue = (e) => {
     const bounds = this.canvasRef.getBoundingClientRect();
@@ -115,10 +125,10 @@ class Knob extends React.Component {
     } else if (a < 0) {
       a += Math.PI * 2;
     }
-    let val = (a * (this.props.max - this.props.min) / this.angleArc) + this.props.min;
-    val = Math.max(Math.min(val, this.props.max), this.props.min);
-    val = (~~(((val < 0) ? -0.5 : 0.5) + (val / this.props.step))) * this.props.step;
-    return Math.round(val * 100) / 100;
+    const val = !this.props.log
+    ? (a * (this.props.max - this.props.min) / this.angleArc) + this.props.min
+    : Math.pow(this.props.max / this.props.min, a / this.angleArc) * this.props.min;
+    return this.coerceToStep(val);
   };
 
   handleMouseDown = (e) => {
@@ -163,25 +173,42 @@ class Knob extends React.Component {
   };
 
   handleTextInput = (e) => {
-    this.props.onChange(this.enforceRange(+e.target.value));
+    const val = Math.max(Math.min(+e.target.value, this.props.max), this.props.min) || this.props.min;
+    this.props.onChange(val);
   };
 
   handleWheel = (e) => {
     e.preventDefault();
     if (e.deltaX > 0 || e.deltaY > 0) {
-      this.props.onChange(this.enforceRange(this.props.value + this.props.step));
+      this.props.onChange(this.coerceToStep(
+        !this.props.log
+        ? this.props.value + this.props.step
+        : this.props.value * this.props.step
+      ));
     } else if (e.deltaX < 0 || e.deltaY < 0) {
-      this.props.onChange(this.enforceRange(this.props.value - this.props.step));
+      this.props.onChange(this.coerceToStep(
+        !this.props.log
+        ? this.props.value - this.props.step
+        : this.props.value / this.props.step
+      ));
     }
   };
 
   handleArrowKey = (e) => {
     if (e.keyCode === 37 || e.keyCode === 40) {
       e.preventDefault();
-      this.props.onChange(this.enforceRange(this.props.value - this.props.step));
+      this.props.onChange(this.coerceToStep(
+        !this.props.log
+        ? this.props.value - this.props.step
+        : this.props.value / this.props.step
+      ));
     } else if (e.keyCode === 38 || e.keyCode === 39) {
       e.preventDefault();
-      this.props.onChange(this.enforceRange(this.props.value + this.props.step));
+      this.props.onChange(this.coerceToStep(
+        !this.props.log
+        ? this.props.value + this.props.step
+        : this.props.value * this.props.step
+      ));
     }
   };
 
@@ -251,7 +278,8 @@ class Knob extends React.Component {
       {this.props.displayInput ?
         <input
           style={this.inputStyle()}
-          type="text" value={this.props.value}
+          type="text"
+          value={this.props.value}
           onChange={this.handleTextInput}
           onKeyDown={this.handleArrowKey}
           readOnly={this.props.readOnly}

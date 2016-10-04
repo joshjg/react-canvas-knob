@@ -29,7 +29,7 @@ var Knob = function (_React$Component) {
     _this.getArcToValue = function (v) {
       var startAngle = void 0;
       var endAngle = void 0;
-      var angle = (v - _this.props.min) * _this.angleArc / (_this.props.max - _this.props.min);
+      var angle = !_this.props.log ? (v - _this.props.min) * _this.angleArc / (_this.props.max - _this.props.min) : Math.log(Math.pow(v / _this.props.min, _this.angleArc)) / Math.log(_this.props.max / _this.props.min);
       if (!_this.props.clockwise) {
         startAngle = _this.endAngle + 0.00001;
         endAngle = startAngle - angle - 0.00001;
@@ -48,8 +48,10 @@ var Knob = function (_React$Component) {
       };
     };
 
-    _this.enforceRange = function (v) {
-      return ~~Math.max(Math.min(v, _this.props.max), _this.props.min);
+    _this.coerceToStep = function (v) {
+      var val = Math.max(Math.min(v, _this.props.max), _this.props.min) || _this.props.min;
+      val = !_this.props.log ? ~~((val < 0 ? -0.5 : 0.5) + val / _this.props.step) * _this.props.step : Math.pow(_this.props.step, ~~((Math.abs(val) < 1 ? -0.5 : 0.5) + Math.log(val) / Math.log(_this.props.step)));
+      return Math.round(val * 1000) / 1000;
     };
 
     _this.eventToValue = function (e) {
@@ -65,10 +67,8 @@ var Knob = function (_React$Component) {
       } else if (a < 0) {
         a += Math.PI * 2;
       }
-      var val = a * (_this.props.max - _this.props.min) / _this.angleArc + _this.props.min;
-      val = Math.max(Math.min(val, _this.props.max), _this.props.min);
-      val = ~~((val < 0 ? -0.5 : 0.5) + val / _this.props.step) * _this.props.step;
-      return Math.round(val * 100) / 100;
+      var val = !_this.props.log ? a * (_this.props.max - _this.props.min) / _this.angleArc + _this.props.min : Math.pow(_this.props.max / _this.props.min, a / _this.angleArc) * _this.props.min;
+      return _this.coerceToStep(val);
     };
 
     _this.handleMouseDown = function (e) {
@@ -113,25 +113,26 @@ var Knob = function (_React$Component) {
     };
 
     _this.handleTextInput = function (e) {
-      _this.props.onChange(_this.enforceRange(+e.target.value));
+      var val = Math.max(Math.min(+e.target.value, _this.props.max), _this.props.min) || _this.props.min;
+      _this.props.onChange(val);
     };
 
     _this.handleWheel = function (e) {
       e.preventDefault();
       if (e.deltaX > 0 || e.deltaY > 0) {
-        _this.props.onChange(_this.enforceRange(_this.props.value + _this.props.step));
+        _this.props.onChange(_this.coerceToStep(!_this.props.log ? _this.props.value + _this.props.step : _this.props.value * _this.props.step));
       } else if (e.deltaX < 0 || e.deltaY < 0) {
-        _this.props.onChange(_this.enforceRange(_this.props.value - _this.props.step));
+        _this.props.onChange(_this.coerceToStep(!_this.props.log ? _this.props.value - _this.props.step : _this.props.value / _this.props.step));
       }
     };
 
     _this.handleArrowKey = function (e) {
       if (e.keyCode === 37 || e.keyCode === 40) {
         e.preventDefault();
-        _this.props.onChange(_this.enforceRange(_this.props.value - _this.props.step));
+        _this.props.onChange(_this.coerceToStep(!_this.props.log ? _this.props.value - _this.props.step : _this.props.value / _this.props.step));
       } else if (e.keyCode === 38 || e.keyCode === 39) {
         e.preventDefault();
-        _this.props.onChange(_this.enforceRange(_this.props.value + _this.props.step));
+        _this.props.onChange(_this.coerceToStep(!_this.props.log ? _this.props.value + _this.props.step : _this.props.value * _this.props.step));
       }
     };
 
@@ -170,7 +171,8 @@ var Knob = function (_React$Component) {
         }),
         _this.props.displayInput ? _react2.default.createElement('input', {
           style: _this.inputStyle(),
-          type: 'text', value: _this.props.value,
+          type: 'text',
+          value: _this.props.value,
           onChange: _this.handleTextInput,
           onKeyDown: _this.handleArrowKey,
           readOnly: _this.props.readOnly
@@ -237,6 +239,7 @@ Knob.propTypes = {
   min: _react2.default.PropTypes.number,
   max: _react2.default.PropTypes.number,
   step: _react2.default.PropTypes.number,
+  log: _react2.default.PropTypes.bool,
   width: _react2.default.PropTypes.number,
   height: _react2.default.PropTypes.number,
   thickness: _react2.default.PropTypes.number,
@@ -258,6 +261,7 @@ Knob.defaultProps = {
   min: 0,
   max: 100,
   step: 1,
+  log: false,
   width: 0, // actual default: width = height = 200px
   height: 0, // see `dimension` below
   thickness: 0.35,

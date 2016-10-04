@@ -58,3 +58,4 @@ class MyComponent extends React.Component {
 - [ ] Port `displayPrevious` feature
 - [ ] Downwards compatibility
 - [ ] Implement some of the existing [pull requests](https://github.com/aterrien/jQuery-Knob/pulls)
+- [ ] Improve manual text input
