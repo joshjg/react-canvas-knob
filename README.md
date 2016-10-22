@@ -51,6 +51,7 @@ class MyComponent extends React.Component {
 |`cursor`|use cursor display mode - give width value or `true` which uses the default cursor width (30)|`false`|
 |`stopper`|stop at min & max on keydown/mousewheel|`true`|
 |`readOnly`|disable all user input|`false`|
+|`disableTextInput`|disable manual text input only|`false`|
 |`displayInput`|show numeric input box|`true`|
 |`angleArc`|arc size in degrees|`360`|
 |`angleOffset`|starting angle in degrees|`0`|

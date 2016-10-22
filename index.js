@@ -93,19 +93,23 @@ var Knob = function (_React$Component) {
     };
 
     _this.handleTouchStart = function (e) {
+      e.preventDefault();
       _this.touchIndex = e.targetTouches.length - 1;
       _this.props.onChange(_this.eventToValue(e.targetTouches[_this.touchIndex]));
-      document.addEventListener('touchmove', _this.handleTouchMove);
+      document.addEventListener('touchmove', _this.handleTouchMove, { passive: false });
       document.addEventListener('touchend', _this.handleTouchEnd);
+      document.addEventListener('touchcancel', _this.handleTouchEnd);
     };
 
     _this.handleTouchMove = function (e) {
+      e.preventDefault();
       _this.props.onChange(_this.eventToValue(e.targetTouches[_this.touchIndex]));
     };
 
     _this.handleTouchEnd = function () {
       document.removeEventListener('touchmove', _this.handleTouchMove);
       document.removeEventListener('touchend', _this.handleTouchEnd);
+      document.removeEventListener('touchcancel', _this.handleTouchEnd);
     };
 
     _this.handleEsc = function (e) {
@@ -169,8 +173,7 @@ var Knob = function (_React$Component) {
             _this.canvasRef = _ref;
           },
           style: { width: '100%', height: '100%' },
-          onMouseDown: _this.props.readOnly ? null : _this.handleMouseDown,
-          onTouchStart: _this.props.readOnly ? null : _this.handleTouchStart
+          onMouseDown: _this.props.readOnly ? null : _this.handleMouseDown
         }),
         _this.props.displayInput ? _react2.default.createElement('input', {
           style: _this.inputStyle(),
@@ -178,7 +181,7 @@ var Knob = function (_React$Component) {
           value: _this.props.value,
           onChange: _this.handleTextInput,
           onKeyDown: _this.handleArrowKey,
-          readOnly: _this.props.readOnly
+          readOnly: _this.props.readOnly || _this.props.disableTextInput
         }) : null
       );
     };
@@ -202,11 +205,19 @@ var Knob = function (_React$Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.drawCanvas();
+      if (!this.props.readOnly) {
+        this.canvasRef.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+      }
     }
   }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate() {
       this.drawCanvas();
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      this.canvasRef.removeEventListener('touchstart', this.handleTouchStart);
     }
   }, {
     key: 'drawCanvas',
@@ -256,6 +267,7 @@ Knob.propTypes = {
   cursor: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number, _react2.default.PropTypes.bool]),
   stopper: _react2.default.PropTypes.bool,
   readOnly: _react2.default.PropTypes.bool,
+  disableTextInput: _react2.default.PropTypes.bool,
   displayInput: _react2.default.PropTypes.bool,
   angleArc: _react2.default.PropTypes.number,
   angleOffset: _react2.default.PropTypes.number
@@ -278,6 +290,7 @@ Knob.defaultProps = {
   cursor: false,
   stopper: true,
   readOnly: false,
+  disableTextInput: false,
   displayInput: true,
   angleArc: 360,
   angleOffset: 0

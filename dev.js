@@ -12,6 +12,7 @@ class Root extends React.Component {
   };
   render() {
     return (
+      <div>
       <Knob
         value={this.state.value}
         onChange={this.handleChange}
@@ -20,6 +21,55 @@ class Root extends React.Component {
         min={0.001}
         max={100000}
       />
+      <Knob
+        value={this.state.value}
+        onChange={this.handleChange}
+        log
+        step={10}
+        min={0.001}
+        max={100000}
+      />
+      <Knob
+        value={this.state.value}
+        onChange={this.handleChange}
+        log
+        step={10}
+        min={0.001}
+        max={100000}
+      />
+      <Knob
+        value={this.state.value}
+        onChange={this.handleChange}
+        log
+        step={10}
+        min={0.001}
+        max={100000}
+      />
+      <Knob
+        value={this.state.value}
+        onChange={this.handleChange}
+        log
+        step={10}
+        min={0.001}
+        max={100000}
+      />
+      <Knob
+        value={this.state.value}
+        onChange={this.handleChange}
+        log
+        step={10}
+        min={0.001}
+        max={100000}
+      />
+      <Knob
+        value={this.state.value}
+        onChange={this.handleChange}
+        log
+        step={10}
+        min={0.001}
+        max={100000}
+      />
+      </div>
     );
   }
 }

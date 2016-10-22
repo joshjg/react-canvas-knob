@@ -24,6 +24,7 @@ class Knob extends React.Component {
     ]),
     stopper: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
+    disableTextInput: React.PropTypes.bool,
     displayInput: React.PropTypes.bool,
     angleArc: React.PropTypes.number,
     angleOffset: React.PropTypes.number,
@@ -47,6 +48,7 @@ class Knob extends React.Component {
     cursor: false,
     stopper: true,
     readOnly: false,
+    disableTextInput: false,
     displayInput: true,
     angleArc: 360,
     angleOffset: 0,
@@ -74,10 +76,17 @@ class Knob extends React.Component {
 
   componentDidMount() {
     this.drawCanvas();
+    if (!this.props.readOnly) {
+      this.canvasRef.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+    }
   }
 
   componentDidUpdate() {
     this.drawCanvas();
+  }
+
+  componentWillUnmount() {
+    this.canvasRef.removeEventListener('touchstart', this.handleTouchStart);
   }
 
   getArcToValue = (v) => {
@@ -151,19 +160,23 @@ class Knob extends React.Component {
   };
 
   handleTouchStart = (e) => {
+    e.preventDefault();
     this.touchIndex = e.targetTouches.length - 1;
     this.props.onChange(this.eventToValue(e.targetTouches[this.touchIndex]));
-    document.addEventListener('touchmove', this.handleTouchMove);
+    document.addEventListener('touchmove', this.handleTouchMove, { passive: false });
     document.addEventListener('touchend', this.handleTouchEnd);
+    document.addEventListener('touchcancel', this.handleTouchEnd);
   };
 
   handleTouchMove = (e) => {
+    e.preventDefault();
     this.props.onChange(this.eventToValue(e.targetTouches[this.touchIndex]));
   };
 
   handleTouchEnd = () => {
     document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('touchend', this.handleTouchEnd);
+    document.removeEventListener('touchcancel', this.handleTouchEnd);
   };
 
   handleEsc = (e) => {
@@ -274,7 +287,6 @@ class Knob extends React.Component {
         ref={(ref) => { this.canvasRef = ref; }}
         style={{ width: '100%', height: '100%' }}
         onMouseDown={this.props.readOnly ? null : this.handleMouseDown}
-        onTouchStart={this.props.readOnly ? null : this.handleTouchStart}
       />
       {this.props.displayInput ?
         <input
@@ -283,7 +295,7 @@ class Knob extends React.Component {
           value={this.props.value}
           onChange={this.handleTextInput}
           onKeyDown={this.handleArrowKey}
-          readOnly={this.props.readOnly}
+          readOnly={this.props.readOnly || this.props.disableTextInput}
         />
         : null
       }
