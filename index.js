@@ -184,7 +184,7 @@ var Knob = function (_React$Component) {
         'div',
         {
           style: { width: _this.w, height: _this.h, display: 'inline-block' },
-          onWheel: _this.props.readOnly ? null : _this.handleWheel
+          onWheel: _this.props.readOnly || _this.props.disableMouseWheel ? null : _this.handleWheel
         },
         _react2.default.createElement('canvas', {
           ref: function ref(_ref) {
@@ -282,7 +282,8 @@ Knob.propTypes = {
   displayInput: _react2.default.PropTypes.bool,
   displayCustom: _react2.default.PropTypes.func,
   angleArc: _react2.default.PropTypes.number,
-  angleOffset: _react2.default.PropTypes.number
+  angleOffset: _react2.default.PropTypes.number,
+  disableMouseWheel: _react2.default.PropTypes.bool
 };
 Knob.defaultProps = {
   min: 0,
@@ -305,6 +306,7 @@ Knob.defaultProps = {
   disableTextInput: false,
   displayInput: true,
   angleArc: 360,
-  angleOffset: 0
+  angleOffset: 0,
+  disableMouseWheel: false
 };
 exports.default = Knob;

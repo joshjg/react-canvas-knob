@@ -29,6 +29,7 @@ class Knob extends React.Component {
     displayCustom: React.PropTypes.func,
     angleArc: React.PropTypes.number,
     angleOffset: React.PropTypes.number,
+    disableMouseWheel: React.PropTypes.bool,
   };
 
   static defaultProps = {
@@ -53,6 +54,7 @@ class Knob extends React.Component {
     displayInput: true,
     angleArc: 360,
     angleOffset: 0,
+    disableMouseWheel: false
   };
 
   constructor(props) {
@@ -304,7 +306,7 @@ class Knob extends React.Component {
   render = () => (
     <div
       style={{ width: this.w, height: this.h, display: 'inline-block' }}
-      onWheel={this.props.readOnly ? null : this.handleWheel}
+      onWheel={this.props.readOnly || this.props.disableMouseWheel ? null : this.handleWheel}
     >
       <canvas
         ref={(ref) => { this.canvasRef = ref; }}

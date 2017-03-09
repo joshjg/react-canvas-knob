@@ -56,6 +56,7 @@ class MyComponent extends React.Component {
 |`displayCustom`|function that will render your custom component in the centre. (Make sure to set `displayInput` as `false`, as that takes priority)|n/a|
 |`angleArc`|arc size in degrees|`360`|
 |`angleOffset`|starting angle in degrees|`0`|
+|`disableMouseWheel`|disable changes on mouse wheel use|`false`|
 
 ## Todo
 - [ ] Port `displayPrevious` feature
