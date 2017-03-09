@@ -1,3 +1,7 @@
+#Unreleased
+* Added `displayCustom`, which allows ability to render custom component in the centre of the knob, if `displayInput` is set to false.
+
+
 # 0.3.0
 * Added boolean property `disableTextInput`
 * Switched `touchStart` from React SyntheticEvent to vanilla DOM event handler

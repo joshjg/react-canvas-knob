@@ -161,6 +161,24 @@ var Knob = function (_React$Component) {
       };
     };
 
+    _this.renderCentre = function () {
+
+      if (_this.props.displayInput) {
+        return _react2.default.createElement('input', {
+          style: _this.inputStyle(),
+          type: 'text',
+          value: _this.props.value,
+          onChange: _this.handleTextInput,
+          onKeyDown: _this.handleArrowKey,
+          readOnly: _this.props.readOnly || _this.props.disableTextInput
+        });
+      } else if (_this.props.displayCustom && typeof _this.props.displayCustom == 'function') {
+        return _this.props.displayCustom();
+      } else {
+        return null;
+      }
+    };
+
     _this.render = function () {
       return _react2.default.createElement(
         'div',
@@ -175,14 +193,7 @@ var Knob = function (_React$Component) {
           style: { width: '100%', height: '100%' },
           onMouseDown: _this.props.readOnly ? null : _this.handleMouseDown
         }),
-        _this.props.displayInput ? _react2.default.createElement('input', {
-          style: _this.inputStyle(),
-          type: 'text',
-          value: _this.props.value,
-          onChange: _this.handleTextInput,
-          onKeyDown: _this.handleArrowKey,
-          readOnly: _this.props.readOnly || _this.props.disableTextInput
-        }) : null
+        _this.renderCentre()
       );
     };
 
@@ -269,6 +280,7 @@ Knob.propTypes = {
   readOnly: _react2.default.PropTypes.bool,
   disableTextInput: _react2.default.PropTypes.bool,
   displayInput: _react2.default.PropTypes.bool,
+  displayCustom: _react2.default.PropTypes.func,
   angleArc: _react2.default.PropTypes.number,
   angleOffset: _react2.default.PropTypes.number
 };

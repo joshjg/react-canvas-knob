@@ -26,6 +26,7 @@ class Knob extends React.Component {
     readOnly: React.PropTypes.bool,
     disableTextInput: React.PropTypes.bool,
     displayInput: React.PropTypes.bool,
+    displayCustom: React.PropTypes.func,
     angleArc: React.PropTypes.number,
     angleOffset: React.PropTypes.number,
   };
@@ -278,6 +279,28 @@ class Knob extends React.Component {
     ctx.stroke();
   }
 
+  renderCentre = () => {
+
+    if (this.props.displayInput) {
+      return (
+        <input
+          style={this.inputStyle()}
+          type="text"
+          value={this.props.value}
+          onChange={this.handleTextInput}
+          onKeyDown={this.handleArrowKey}
+          readOnly={this.props.readOnly || this.props.disableTextInput}
+        />
+      );
+
+    } else if (this.props.displayCustom && typeof this.props.displayCustom == 'function') {
+      return this.props.displayCustom();
+
+    } else {
+      return null;
+    }
+  };
+
   render = () => (
     <div
       style={{ width: this.w, height: this.h, display: 'inline-block' }}
@@ -288,17 +311,7 @@ class Knob extends React.Component {
         style={{ width: '100%', height: '100%' }}
         onMouseDown={this.props.readOnly ? null : this.handleMouseDown}
       />
-      {this.props.displayInput ?
-        <input
-          style={this.inputStyle()}
-          type="text"
-          value={this.props.value}
-          onChange={this.handleTextInput}
-          onKeyDown={this.handleArrowKey}
-          readOnly={this.props.readOnly || this.props.disableTextInput}
-        />
-        : null
-      }
+      {this.renderCentre()}
     </div>
   );
 }
