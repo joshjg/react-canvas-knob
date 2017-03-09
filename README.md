@@ -53,6 +53,7 @@ class MyComponent extends React.Component {
 |`readOnly`|disable all user input|`false`|
 |`disableTextInput`|disable manual text input only|`false`|
 |`displayInput`|show numeric input box|`true`|
+|`displayCustom`|function that will render your custom component in the centre. (Make sure to set `displayInput` as `false`, as that takes priority)|n/a|
 |`angleArc`|arc size in degrees|`360`|
 |`angleOffset`|starting angle in degrees|`0`|
 |`disableMouseWheel`|disable changes on mouse wheel use|`false`|
