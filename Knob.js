@@ -30,6 +30,7 @@ class Knob extends React.Component {
     angleArc: React.PropTypes.number,
     angleOffset: React.PropTypes.number,
     disableMouseWheel: React.PropTypes.bool,
+    title: React.PropTypes.string,
   };
 
   static defaultProps = {
@@ -312,6 +313,7 @@ class Knob extends React.Component {
         ref={(ref) => { this.canvasRef = ref; }}
         style={{ width: '100%', height: '100%' }}
         onMouseDown={this.props.readOnly ? null : this.handleMouseDown}
+        title={this.props.title ? `${this.props.title}: ${this.props.value}` : this.props.value}
       />
       {this.renderCentre()}
     </div>

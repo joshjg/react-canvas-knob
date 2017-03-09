@@ -57,6 +57,7 @@ class MyComponent extends React.Component {
 |`angleArc`|arc size in degrees|`360`|
 |`angleOffset`|starting angle in degrees|`0`|
 |`disableMouseWheel`|disable changes on mouse wheel use|`false`|
+|`title`|adds title attribute to the wheel|`value`|
 
 ## Todo
 - [ ] Port `displayPrevious` feature

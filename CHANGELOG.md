@@ -1,6 +1,7 @@
 #Unreleased
 * Added `displayCustom`, which allows ability to render custom component in the centre of the knob, if `displayInput` is set to false.
 * Added prop to disable mouse wheel action.
+* Added prop to add title attribute on the wheel.
 
 # 0.3.0
 * Added boolean property `disableTextInput`
