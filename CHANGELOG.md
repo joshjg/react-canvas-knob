@@ -1,3 +1,6 @@
+# Unreleased
+* Added prop to disable mouse wheel action.
+
 # 0.3.0
 * Added boolean property `disableTextInput`
 * Switched `touchStart` from React SyntheticEvent to vanilla DOM event handler

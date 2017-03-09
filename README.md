@@ -55,6 +55,7 @@ class MyComponent extends React.Component {
 |`displayInput`|show numeric input box|`true`|
 |`angleArc`|arc size in degrees|`360`|
 |`angleOffset`|starting angle in degrees|`0`|
+|`disableMouseWheel`|disable changes on mouse wheel use|`false`|
 
 ## Todo
 - [ ] Port `displayPrevious` feature
