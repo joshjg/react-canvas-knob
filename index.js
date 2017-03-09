@@ -173,7 +173,8 @@ var Knob = function (_React$Component) {
             _this.canvasRef = _ref;
           },
           style: { width: '100%', height: '100%' },
-          onMouseDown: _this.props.readOnly ? null : _this.handleMouseDown
+          onMouseDown: _this.props.readOnly ? null : _this.handleMouseDown,
+          title: _this.props.title ? _this.props.title + ': ' + _this.props.value : _this.props.value
         }),
         _this.props.displayInput ? _react2.default.createElement('input', {
           style: _this.inputStyle(),
@@ -271,7 +272,8 @@ Knob.propTypes = {
   displayInput: _react2.default.PropTypes.bool,
   angleArc: _react2.default.PropTypes.number,
   angleOffset: _react2.default.PropTypes.number,
-  disableMouseWheel: _react2.default.PropTypes.bool
+  disableMouseWheel: _react2.default.PropTypes.bool,
+  title: _react2.default.PropTypes.string
 };
 Knob.defaultProps = {
   min: 0,
