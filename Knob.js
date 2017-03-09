@@ -38,8 +38,8 @@ class Knob extends React.Component {
     max: 100,
     step: 1,
     log: false,
-    width: 0, // actual default: width = height = 200px
-    height: 0, // see `dimension` below
+    width: 200,
+    height: 200, 
     thickness: 0.35,
     lineCap: 'butt',
     bgColor: '#EEE',
@@ -60,12 +60,8 @@ class Knob extends React.Component {
 
   constructor(props) {
     super(props);
-    let dimension = 200; // default if neither width or height given
-    if (this.props.width || this.props.height) {
-      dimension = Math.max(this.props.width, this.props.height);
-    }
-    this.w = dimension;
-    this.h = dimension;
+    this.w = this.props.width || 200;
+    this.h = this.props.height || this.w;
     this.cursorExt = this.props.cursor === true ? 0.3 : this.props.cursor / 100;
     this.angleArc = this.props.angleArc * Math.PI / 180;
     this.angleOffset = this.props.angleOffset * Math.PI / 180;
