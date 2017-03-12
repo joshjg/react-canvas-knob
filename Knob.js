@@ -4,6 +4,7 @@ class Knob extends React.Component {
   static propTypes = {
     value: React.PropTypes.number.isRequired,
     onChange: React.PropTypes.func.isRequired,
+    onChangeEnd: React.PropTypes.func,
     min: React.PropTypes.number,
     max: React.PropTypes.number,
     step: React.PropTypes.number,
@@ -153,7 +154,8 @@ class Knob extends React.Component {
     this.props.onChange(this.eventToValue(e));
   };
 
-  handleMouseUp = () => {
+  handleMouseUp = (e) => {
+    this.props.onChangeEnd(this.eventToValue(e));
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
     document.removeEventListener('keyup', this.handleEsc);
@@ -173,7 +175,8 @@ class Knob extends React.Component {
     this.props.onChange(this.eventToValue(e.targetTouches[this.touchIndex]));
   };
 
-  handleTouchEnd = () => {
+  handleTouchEnd = (e) => {
+    this.props.onChangeEnd(this.eventToValue(e.changedTouches[this.touchIndex]));
     document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('touchend', this.handleTouchEnd);
     document.removeEventListener('touchcancel', this.handleTouchEnd);

@@ -34,7 +34,8 @@ class MyComponent extends React.Component {
 | name | description | default |
 |------|-------------|---------|
 |`value`|numeric value of knob|n/a|
-|`onChange`|function to be called on user input|n/a|
+|`onChange`|function to be called on user input with the current numerical value|n/a|
+|`onChangeEnd`|function to be called on mouseUp or touchEnd with the current numerical value|n/a|
 |`min`|min value|`0`|
 |`max`|max value|`100`|
 |`step`|step size|`1`|
@@ -60,6 +61,7 @@ class MyComponent extends React.Component {
 |`title`|adds title attribute to the wheel|`value`|
 
 ## Todo
+- [ ] Fix for height > width condition
 - [ ] Port `displayPrevious` feature
 - [ ] Downwards compatibility
 - [ ] Implement some of the existing [pull requests](https://github.com/aterrien/jQuery-Knob/pulls)

@@ -16,58 +16,52 @@ class Root extends React.Component {
         <Knob
           value={this.state.value}
           onChange={this.handleChange}
-          log
           step={10}
-          min={0.001}
-          max={100000}
+          min={0}
+          max={500}
+          angleArc={180}
+          angleOffset={-90}
+          height={100}
+          width={200}
+          onChangeEnd={(v) => console.log(v)}
         />
         <Knob
           value={this.state.value}
           onChange={this.handleChange}
-          log
           step={10}
-          min={0.001}
-          max={100000}
+          min={0}
+          max={500}
+          angleArc={180}
+          height={200}
+          width={100}
         />
         <Knob
           value={this.state.value}
           onChange={this.handleChange}
-          log
           step={10}
-          min={0.001}
-          max={100000}
+          min={0}
+          max={500}
         />
         <Knob
           value={this.state.value}
           onChange={this.handleChange}
-          log
           step={10}
-          min={0.001}
-          max={100000}
+          min={0}
+          max={500}
         />
         <Knob
           value={this.state.value}
           onChange={this.handleChange}
-          log
           step={10}
-          min={0.001}
-          max={100000}
+          min={0}
+          max={500}
         />
         <Knob
           value={this.state.value}
           onChange={this.handleChange}
-          log
           step={10}
-          min={0.001}
-          max={100000}
-        />
-        <Knob
-          value={this.state.value}
-          onChange={this.handleChange}
-          log
-          step={10}
-          min={0.001}
-          max={100000}
+          min={0}
+          max={500}
         />
       </div>
     );

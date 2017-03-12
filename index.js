@@ -86,7 +86,8 @@ var Knob = function (_React$Component) {
       _this.props.onChange(_this.eventToValue(e));
     };
 
-    _this.handleMouseUp = function () {
+    _this.handleMouseUp = function (e) {
+      _this.props.onChangeEnd(_this.eventToValue(e));
       document.removeEventListener('mousemove', _this.handleMouseMove);
       document.removeEventListener('mouseup', _this.handleMouseUp);
       document.removeEventListener('keyup', _this.handleEsc);
@@ -106,7 +107,8 @@ var Knob = function (_React$Component) {
       _this.props.onChange(_this.eventToValue(e.targetTouches[_this.touchIndex]));
     };
 
-    _this.handleTouchEnd = function () {
+    _this.handleTouchEnd = function (e) {
+      _this.props.onChangeEnd(_this.eventToValue(e.changedTouches[_this.touchIndex]));
       document.removeEventListener('touchmove', _this.handleTouchMove);
       document.removeEventListener('touchend', _this.handleTouchEnd);
       document.removeEventListener('touchcancel', _this.handleTouchEnd);
@@ -162,7 +164,6 @@ var Knob = function (_React$Component) {
     };
 
     _this.renderCentre = function () {
-
       if (_this.props.displayInput) {
         return _react2.default.createElement('input', {
           style: _this.inputStyle(),
@@ -172,11 +173,10 @@ var Knob = function (_React$Component) {
           onKeyDown: _this.handleArrowKey,
           readOnly: _this.props.readOnly || _this.props.disableTextInput
         });
-      } else if (_this.props.displayCustom && typeof _this.props.displayCustom == 'function') {
+      } else if (_this.props.displayCustom && typeof _this.props.displayCustom === 'function') {
         return _this.props.displayCustom();
-      } else {
-        return null;
       }
+      return null;
     };
 
     _this.render = function () {
@@ -198,12 +198,8 @@ var Knob = function (_React$Component) {
       );
     };
 
-    var dimension = 200; // default if neither width or height given
-    if (_this.props.width || _this.props.height) {
-      dimension = Math.max(_this.props.width, _this.props.height);
-    }
-    _this.w = dimension;
-    _this.h = dimension;
+    _this.w = _this.props.width || 200;
+    _this.h = _this.props.height || _this.w;
     _this.cursorExt = _this.props.cursor === true ? 0.3 : _this.props.cursor / 100;
     _this.angleArc = _this.props.angleArc * Math.PI / 180;
     _this.angleOffset = _this.props.angleOffset * Math.PI / 180;
@@ -262,6 +258,7 @@ var Knob = function (_React$Component) {
 Knob.propTypes = {
   value: _react2.default.PropTypes.number.isRequired,
   onChange: _react2.default.PropTypes.func.isRequired,
+  onChangeEnd: _react2.default.PropTypes.func,
   min: _react2.default.PropTypes.number,
   max: _react2.default.PropTypes.number,
   step: _react2.default.PropTypes.number,
@@ -292,8 +289,8 @@ Knob.defaultProps = {
   max: 100,
   step: 1,
   log: false,
-  width: 0, // actual default: width = height = 200px
-  height: 0, // see `dimension` below
+  width: 200,
+  height: 200,
   thickness: 0.35,
   lineCap: 'butt',
   bgColor: '#EEE',
