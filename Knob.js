@@ -39,7 +39,7 @@ class Knob extends React.Component {
     step: 1,
     log: false,
     width: 200,
-    height: 200, 
+    height: 200,
     thickness: 0.35,
     lineCap: 'butt',
     bgColor: '#EEE',
@@ -55,7 +55,7 @@ class Knob extends React.Component {
     displayInput: true,
     angleArc: 360,
     angleOffset: 0,
-    disableMouseWheel: false
+    disableMouseWheel: false,
   };
 
   constructor(props) {
@@ -279,7 +279,6 @@ class Knob extends React.Component {
   }
 
   renderCentre = () => {
-
     if (this.props.displayInput) {
       return (
         <input
@@ -291,13 +290,10 @@ class Knob extends React.Component {
           readOnly={this.props.readOnly || this.props.disableTextInput}
         />
       );
-
-    } else if (this.props.displayCustom && typeof this.props.displayCustom == 'function') {
+    } else if (this.props.displayCustom && typeof this.props.displayCustom === 'function') {
       return this.props.displayCustom();
-
-    } else {
-      return null;
     }
+    return null;
   };
 
   render = () => (
