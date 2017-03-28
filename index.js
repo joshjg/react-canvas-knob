@@ -27,6 +27,7 @@ var Knob = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Knob.__proto__ || Object.getPrototypeOf(Knob)).call(this, props));
 
     _this.getArcToValue = function (v) {
+      v = parseFloat(v); // Addition: allows units to be used in value
       var startAngle = void 0;
       var endAngle = void 0;
       var angle = !_this.props.log ? (v - _this.props.min) * _this.angleArc / (_this.props.max - _this.props.min) : Math.log(Math.pow(v / _this.props.min, _this.angleArc)) / Math.log(_this.props.max / _this.props.min);
@@ -198,8 +199,17 @@ var Knob = function (_React$Component) {
       );
     };
 
-    _this.w = _this.props.width || 200;
-    _this.h = _this.props.height || _this.w;
+    var dimension = 200; // default if neither width or height given
+      if (_this.props.width) {
+        if (_this.props.width <= 1) { // Addition: treats any number 1 or under as a percentage of window dimensions
+            dimension = window.innerWidth * _this.props.width;
+        }
+        if (dimension > 500) {
+            dimension = 500;
+        }
+      }
+    _this.w = dimension;
+    _this.h = _this.w;
     _this.cursorExt = _this.props.cursor === true ? 0.3 : _this.props.cursor / 100;
     _this.angleArc = _this.props.angleArc * Math.PI / 180;
     _this.angleOffset = _this.props.angleOffset * Math.PI / 180;
