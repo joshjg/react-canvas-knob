@@ -82,6 +82,15 @@ class Knob extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProp) {
+    if (nextProp.width && this.w !== nextProp.width) {
+      this.w = nextProp.width;
+    }
+    if (nextProp.height && this.h !== nextProp.height) {
+      this.h = nextProp.height;
+    }
+  }
+
   componentDidUpdate() {
     this.drawCanvas();
   }
