@@ -59,6 +59,8 @@ class MyComponent extends React.Component {
 |`angleOffset`|starting angle in degrees|`0`|
 |`disableMouseWheel`|disable changes on mouse wheel use|`false`|
 |`title`|adds title attribute to the wheel|`value`|
+`className`|appends className, default `react-canvas-knob`|`n/a`|
+
 
 ## Todo
 - [ ] Fix for height > width condition
