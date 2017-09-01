@@ -114,6 +114,15 @@ class Knob extends React.Component {
     };
   };
 
+  // Calculate ratio to scale canvas to avoid blurriness on HiDPI devices
+  getCanvasScale = (ctx) => {
+    const devicePixelRatio = window.devicePixelRatio ||
+      window.screen.deviceXDPI / window.screen.logicalXDPI || // IE10
+      1;
+    const backingStoreRatio = ctx.webkitBackingStorePixelRatio || 1;
+    return devicePixelRatio / backingStoreRatio;
+  };
+
   coerceToStep = (v) => {
     let val = !this.props.log
     ? (~~(((v < 0) ? -0.5 : 0.5) + (v / this.props.step))) * this.props.step
@@ -250,9 +259,11 @@ class Knob extends React.Component {
   });
 
   drawCanvas() {
-    this.canvasRef.width = this.w; // clears the canvas
-    this.canvasRef.height = this.h;
     const ctx = this.canvasRef.getContext('2d');
+    const scale = this.getCanvasScale(ctx);
+    this.canvasRef.width = this.w * scale; // clears the canvas
+    this.canvasRef.height = this.h * scale;
+    ctx.scale(scale, scale);
     this.xy = this.w / 2; // coordinates of canvas center
     this.lineWidth = this.xy * this.props.thickness;
     this.radius = this.xy - (this.lineWidth / 2);
