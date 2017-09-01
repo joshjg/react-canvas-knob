@@ -155,7 +155,9 @@ class Knob extends React.Component {
   };
 
   handleMouseUp = (e) => {
-    this.props.onChangeEnd(this.eventToValue(e));
+    if (this.props.onChangeEnd) {
+      this.props.onChangeEnd(this.eventToValue(e));
+    }
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
     document.removeEventListener('keyup', this.handleEsc);
@@ -176,7 +178,9 @@ class Knob extends React.Component {
   };
 
   handleTouchEnd = (e) => {
-    this.props.onChangeEnd(this.eventToValue(e.changedTouches[this.touchIndex]));
+    if (this.props.onChangeEnd) {
+      this.props.onChangeEnd(this.eventToValue(e));
+    }
     document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('touchend', this.handleTouchEnd);
     document.removeEventListener('touchcancel', this.handleTouchEnd);
