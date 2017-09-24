@@ -10,6 +10,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -46,6 +50,13 @@ var Knob = function (_React$Component) {
         endAngle: endAngle,
         acw: !_this.props.clockwise && !_this.props.cursor
       };
+    };
+
+    _this.getCanvasScale = function (ctx) {
+      var devicePixelRatio = window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI || // IE10
+      1;
+      var backingStoreRatio = ctx.webkitBackingStorePixelRatio || 1;
+      return devicePixelRatio / backingStoreRatio;
     };
 
     _this.coerceToStep = function (v) {
@@ -87,7 +98,9 @@ var Knob = function (_React$Component) {
     };
 
     _this.handleMouseUp = function (e) {
-      _this.props.onChangeEnd(_this.eventToValue(e));
+      if (_this.props.onChangeEnd) {
+        _this.props.onChangeEnd(_this.eventToValue(e));
+      }
       document.removeEventListener('mousemove', _this.handleMouseMove);
       document.removeEventListener('mouseup', _this.handleMouseUp);
       document.removeEventListener('keyup', _this.handleEsc);
@@ -108,7 +121,9 @@ var Knob = function (_React$Component) {
     };
 
     _this.handleTouchEnd = function (e) {
-      _this.props.onChangeEnd(_this.eventToValue(e.changedTouches[_this.touchIndex]));
+      if (_this.props.onChangeEnd) {
+        _this.props.onChangeEnd(_this.eventToValue(e));
+      }
       document.removeEventListener('touchmove', _this.handleTouchMove);
       document.removeEventListener('touchend', _this.handleTouchEnd);
       document.removeEventListener('touchcancel', _this.handleTouchEnd);
@@ -237,12 +252,17 @@ var Knob = function (_React$Component) {
     value: function componentWillUnmount() {
       this.canvasRef.removeEventListener('touchstart', this.handleTouchStart);
     }
+
+    // Calculate ratio to scale canvas to avoid blurriness on HiDPI devices
+
   }, {
     key: 'drawCanvas',
     value: function drawCanvas() {
-      this.canvasRef.width = this.w; // clears the canvas
-      this.canvasRef.height = this.h;
       var ctx = this.canvasRef.getContext('2d');
+      var scale = this.getCanvasScale(ctx);
+      this.canvasRef.width = this.w * scale; // clears the canvas
+      this.canvasRef.height = this.h * scale;
+      ctx.scale(scale, scale);
       this.xy = this.w / 2; // coordinates of canvas center
       this.lineWidth = this.xy * this.props.thickness;
       this.radius = this.xy - this.lineWidth / 2;
@@ -266,33 +286,33 @@ var Knob = function (_React$Component) {
 }(_react2.default.Component);
 
 Knob.propTypes = {
-  value: _react2.default.PropTypes.number.isRequired,
-  onChange: _react2.default.PropTypes.func.isRequired,
-  onChangeEnd: _react2.default.PropTypes.func,
-  min: _react2.default.PropTypes.number,
-  max: _react2.default.PropTypes.number,
-  step: _react2.default.PropTypes.number,
-  log: _react2.default.PropTypes.bool,
-  width: _react2.default.PropTypes.number,
-  height: _react2.default.PropTypes.number,
-  thickness: _react2.default.PropTypes.number,
-  lineCap: _react2.default.PropTypes.oneOf(['butt', 'round']),
-  bgColor: _react2.default.PropTypes.string,
-  fgColor: _react2.default.PropTypes.string,
-  inputColor: _react2.default.PropTypes.string,
-  font: _react2.default.PropTypes.string,
-  fontWeight: _react2.default.PropTypes.string,
-  clockwise: _react2.default.PropTypes.bool,
-  cursor: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number, _react2.default.PropTypes.bool]),
-  stopper: _react2.default.PropTypes.bool,
-  readOnly: _react2.default.PropTypes.bool,
-  disableTextInput: _react2.default.PropTypes.bool,
-  displayInput: _react2.default.PropTypes.bool,
-  displayCustom: _react2.default.PropTypes.func,
-  angleArc: _react2.default.PropTypes.number,
-  angleOffset: _react2.default.PropTypes.number,
-  disableMouseWheel: _react2.default.PropTypes.bool,
-  title: _react2.default.PropTypes.string
+  value: _propTypes2.default.number.isRequired,
+  onChange: _propTypes2.default.func.isRequired,
+  onChangeEnd: _propTypes2.default.func,
+  min: _propTypes2.default.number,
+  max: _propTypes2.default.number,
+  step: _propTypes2.default.number,
+  log: _propTypes2.default.bool,
+  width: _propTypes2.default.number,
+  height: _propTypes2.default.number,
+  thickness: _propTypes2.default.number,
+  lineCap: _propTypes2.default.oneOf(['butt', 'round']),
+  bgColor: _propTypes2.default.string,
+  fgColor: _propTypes2.default.string,
+  inputColor: _propTypes2.default.string,
+  font: _propTypes2.default.string,
+  fontWeight: _propTypes2.default.string,
+  clockwise: _propTypes2.default.bool,
+  cursor: _propTypes2.default.oneOfType([_propTypes2.default.number, _propTypes2.default.bool]),
+  stopper: _propTypes2.default.bool,
+  readOnly: _propTypes2.default.bool,
+  disableTextInput: _propTypes2.default.bool,
+  displayInput: _propTypes2.default.bool,
+  displayCustom: _propTypes2.default.func,
+  angleArc: _propTypes2.default.number,
+  angleOffset: _propTypes2.default.number,
+  disableMouseWheel: _propTypes2.default.bool,
+  title: _propTypes2.default.string
 };
 Knob.defaultProps = {
   min: 0,

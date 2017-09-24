@@ -1,37 +1,38 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class Knob extends React.Component {
   static propTypes = {
-    value: React.PropTypes.number.isRequired,
-    onChange: React.PropTypes.func.isRequired,
-    onChangeEnd: React.PropTypes.func,
-    min: React.PropTypes.number,
-    max: React.PropTypes.number,
-    step: React.PropTypes.number,
-    log: React.PropTypes.bool,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    thickness: React.PropTypes.number,
-    lineCap: React.PropTypes.oneOf(['butt', 'round']),
-    bgColor: React.PropTypes.string,
-    fgColor: React.PropTypes.string,
-    inputColor: React.PropTypes.string,
-    font: React.PropTypes.string,
-    fontWeight: React.PropTypes.string,
-    clockwise: React.PropTypes.bool,
-    cursor: React.PropTypes.oneOfType([
-      React.PropTypes.number,
-      React.PropTypes.bool,
+    value: PropTypes.number.isRequired,
+    onChange: PropTypes.func.isRequired,
+    onChangeEnd: PropTypes.func,
+    min: PropTypes.number,
+    max: PropTypes.number,
+    step: PropTypes.number,
+    log: PropTypes.bool,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    thickness: PropTypes.number,
+    lineCap: PropTypes.oneOf(['butt', 'round']),
+    bgColor: PropTypes.string,
+    fgColor: PropTypes.string,
+    inputColor: PropTypes.string,
+    font: PropTypes.string,
+    fontWeight: PropTypes.string,
+    clockwise: PropTypes.bool,
+    cursor: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.bool,
     ]),
-    stopper: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool,
-    disableTextInput: React.PropTypes.bool,
-    displayInput: React.PropTypes.bool,
-    displayCustom: React.PropTypes.func,
-    angleArc: React.PropTypes.number,
-    angleOffset: React.PropTypes.number,
-    disableMouseWheel: React.PropTypes.bool,
-    title: React.PropTypes.string,
+    stopper: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    disableTextInput: PropTypes.bool,
+    displayInput: PropTypes.bool,
+    displayCustom: PropTypes.func,
+    angleArc: PropTypes.number,
+    angleOffset: PropTypes.number,
+    disableMouseWheel: PropTypes.bool,
+    title: PropTypes.string,
   };
 
   static defaultProps = {
@@ -123,6 +124,15 @@ class Knob extends React.Component {
     };
   };
 
+  // Calculate ratio to scale canvas to avoid blurriness on HiDPI devices
+  getCanvasScale = (ctx) => {
+    const devicePixelRatio = window.devicePixelRatio ||
+      window.screen.deviceXDPI / window.screen.logicalXDPI || // IE10
+      1;
+    const backingStoreRatio = ctx.webkitBackingStorePixelRatio || 1;
+    return devicePixelRatio / backingStoreRatio;
+  };
+
   coerceToStep = (v) => {
     let val = !this.props.log
     ? (~~(((v < 0) ? -0.5 : 0.5) + (v / this.props.step))) * this.props.step
@@ -164,7 +174,9 @@ class Knob extends React.Component {
   };
 
   handleMouseUp = (e) => {
-    this.props.onChangeEnd(this.eventToValue(e));
+    if (this.props.onChangeEnd) {
+      this.props.onChangeEnd(this.eventToValue(e));
+    }
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
     document.removeEventListener('keyup', this.handleEsc);
@@ -185,7 +197,9 @@ class Knob extends React.Component {
   };
 
   handleTouchEnd = (e) => {
-    this.props.onChangeEnd(this.eventToValue(e.changedTouches[this.touchIndex]));
+    if (this.props.onChangeEnd) {
+      this.props.onChangeEnd(this.eventToValue(e));
+    }
     document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('touchend', this.handleTouchEnd);
     document.removeEventListener('touchcancel', this.handleTouchEnd);
@@ -255,9 +269,11 @@ class Knob extends React.Component {
   });
 
   drawCanvas() {
-    this.canvasRef.width = this.w; // clears the canvas
-    this.canvasRef.height = this.h;
     const ctx = this.canvasRef.getContext('2d');
+    const scale = this.getCanvasScale(ctx);
+    this.canvasRef.width = this.w * scale; // clears the canvas
+    this.canvasRef.height = this.h * scale;
+    ctx.scale(scale, scale);
     this.xy = this.w / 2; // coordinates of canvas center
     this.lineWidth = this.xy * this.props.thickness;
     this.radius = this.xy - (this.lineWidth / 2);
