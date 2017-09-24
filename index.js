@@ -4,11 +4,25 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _redboxReact2 = require('redbox-react');
+
+var _redboxReact3 = _interopRequireDefault(_redboxReact2);
+
+var _reactTransformCatchErrors3 = require('react-transform-catch-errors');
+
+var _reactTransformCatchErrors4 = _interopRequireDefault(_reactTransformCatchErrors3);
+
+var _react2 = require('react');
+
+var _react3 = _interopRequireDefault(_react2);
+
+var _reactTransformHmr3 = require('react-transform-hmr');
+
+var _reactTransformHmr4 = _interopRequireDefault(_reactTransformHmr3);
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
+var _class, _temp;
 
 var _propTypes = require('prop-types');
 
@@ -22,7 +36,33 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Knob = function (_React$Component) {
+var _components = {
+  Knob: {
+    displayName: 'Knob'
+  }
+};
+
+var _reactTransformHmr2 = (0, _reactTransformHmr4.default)({
+  filename: 'Knob.js',
+  components: _components,
+  locals: [module],
+  imports: [_react3.default]
+});
+
+var _reactTransformCatchErrors2 = (0, _reactTransformCatchErrors4.default)({
+  filename: 'Knob.js',
+  components: _components,
+  locals: [],
+  imports: [_react3.default, _redboxReact3.default]
+});
+
+function _wrapComponent(id) {
+  return function (Component) {
+    return _reactTransformHmr2(_reactTransformCatchErrors2(Component, id), id);
+  };
+}
+
+var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) {
   _inherits(Knob, _React$Component);
 
   function Knob(props) {
@@ -98,9 +138,7 @@ var Knob = function (_React$Component) {
     };
 
     _this.handleMouseUp = function (e) {
-      if (_this.props.onChangeEnd) {
-        _this.props.onChangeEnd(_this.eventToValue(e));
-      }
+      _this.props.onChangeEnd(_this.eventToValue(e));
       document.removeEventListener('mousemove', _this.handleMouseMove);
       document.removeEventListener('mouseup', _this.handleMouseUp);
       document.removeEventListener('keyup', _this.handleEsc);
@@ -121,9 +159,7 @@ var Knob = function (_React$Component) {
     };
 
     _this.handleTouchEnd = function (e) {
-      if (_this.props.onChangeEnd) {
-        _this.props.onChangeEnd(_this.eventToValue(e));
-      }
+      _this.props.onChangeEnd(_this.eventToValue(e));
       document.removeEventListener('touchmove', _this.handleTouchMove);
       document.removeEventListener('touchend', _this.handleTouchEnd);
       document.removeEventListener('touchcancel', _this.handleTouchEnd);
@@ -178,39 +214,28 @@ var Knob = function (_React$Component) {
       };
     };
 
-    _this.renderCentre = function () {
-      if (_this.props.displayInput) {
-        return _react2.default.createElement('input', {
+    _this.renderCenter = function () {
+      var _this$props = _this.props;
+      var displayCustom = _this$props.displayCustom;
+      var displayInput = _this$props.displayInput;
+      var disableTextInput = _this$props.disableTextInput;
+      var readOnly = _this$props.readOnly;
+      var value = _this$props.value;
+
+
+      if (displayInput) {
+        return _react3.default.createElement('input', {
           style: _this.inputStyle(),
           type: 'text',
-          value: _this.props.value,
+          value: value,
           onChange: _this.handleTextInput,
           onKeyDown: _this.handleArrowKey,
-          readOnly: _this.props.readOnly || _this.props.disableTextInput
+          readOnly: readOnly || disableTextInput
         });
-      } else if (_this.props.displayCustom && typeof _this.props.displayCustom === 'function') {
-        return _this.props.displayCustom();
+      } else if (displayCustom && typeof displayCustom === 'function') {
+        return displayCustom();
       }
       return null;
-    };
-
-    _this.render = function () {
-      return _react2.default.createElement(
-        'div',
-        {
-          style: { width: _this.w, height: _this.h, display: 'inline-block' },
-          onWheel: _this.props.readOnly || _this.props.disableMouseWheel ? null : _this.handleWheel
-        },
-        _react2.default.createElement('canvas', {
-          ref: function ref(_ref) {
-            _this.canvasRef = _ref;
-          },
-          style: { width: '100%', height: '100%' },
-          onMouseDown: _this.props.readOnly ? null : _this.handleMouseDown,
-          title: _this.props.title ? _this.props.title + ': ' + _this.props.value : _this.props.value
-        }),
-        _this.renderCentre()
-      );
     };
 
     _this.w = _this.props.width || 200;
@@ -280,12 +305,43 @@ var Knob = function (_React$Component) {
       ctx.arc(this.xy, this.xy, this.radius, a.startAngle, a.endAngle, a.acw);
       ctx.stroke();
     }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      var _props = this.props;
+      var canvasClassName = _props.canvasClassName;
+      var className = _props.className;
+      var disableMouseWheel = _props.disableMouseWheel;
+      var readOnly = _props.readOnly;
+      var title = _props.title;
+      var value = _props.value;
+
+
+      return _react3.default.createElement(
+        'div',
+        {
+          className: className,
+          style: { width: this.w, height: this.h, display: 'inline-block' },
+          onWheel: readOnly || disableMouseWheel ? null : this.handleWheel
+        },
+        _react3.default.createElement('canvas', {
+          ref: function ref(_ref) {
+            _this2.canvasRef = _ref;
+          },
+          className: canvasClassName,
+          style: { width: '100%', height: '100%' },
+          onMouseDown: readOnly ? null : this.handleMouseDown,
+          title: title ? title + ': ' + value : value
+        }),
+        this.renderCenter()
+      );
+    }
   }]);
 
   return Knob;
-}(_react2.default.Component);
-
-Knob.propTypes = {
+}(_react3.default.Component), _class.propTypes = {
   value: _propTypes2.default.number.isRequired,
   onChange: _propTypes2.default.func.isRequired,
   onChangeEnd: _propTypes2.default.func,
@@ -312,9 +368,11 @@ Knob.propTypes = {
   angleArc: _propTypes2.default.number,
   angleOffset: _propTypes2.default.number,
   disableMouseWheel: _propTypes2.default.bool,
-  title: _propTypes2.default.string
-};
-Knob.defaultProps = {
+  title: _propTypes2.default.string,
+  className: _propTypes2.default.string,
+  canvasClassName: _propTypes2.default.string
+}, _class.defaultProps = {
+  onChangeEnd: function onChangeEnd() {},
   min: 0,
   max: 100,
   step: 1,
@@ -336,6 +394,9 @@ Knob.defaultProps = {
   displayInput: true,
   angleArc: 360,
   angleOffset: 0,
-  disableMouseWheel: false
-};
+  disableMouseWheel: false,
+  className: null,
+  canvasClassName: null
+}, _temp));
+
 exports.default = Knob;

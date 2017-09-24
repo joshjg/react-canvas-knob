@@ -33,9 +33,12 @@ class Knob extends React.Component {
     angleOffset: PropTypes.number,
     disableMouseWheel: PropTypes.bool,
     title: PropTypes.string,
+    className: PropTypes.string,
+    canvasClassName: PropTypes.string,
   };
 
   static defaultProps = {
+    onChangeEnd: () => {},
     min: 0,
     max: 100,
     step: 1,
@@ -58,6 +61,8 @@ class Knob extends React.Component {
     angleArc: 360,
     angleOffset: 0,
     disableMouseWheel: false,
+    className: null,
+    canvasClassName: null,
   };
 
   constructor(props) {
@@ -174,9 +179,7 @@ class Knob extends React.Component {
   };
 
   handleMouseUp = (e) => {
-    if (this.props.onChangeEnd) {
-      this.props.onChangeEnd(this.eventToValue(e));
-    }
+    this.props.onChangeEnd(this.eventToValue(e));
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
     document.removeEventListener('keyup', this.handleEsc);
@@ -197,9 +200,7 @@ class Knob extends React.Component {
   };
 
   handleTouchEnd = (e) => {
-    if (this.props.onChangeEnd) {
-      this.props.onChangeEnd(this.eventToValue(e));
-    }
+    this.props.onChangeEnd(this.eventToValue(e));
     document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('touchend', this.handleTouchEnd);
     document.removeEventListener('touchcancel', this.handleTouchEnd);
@@ -306,38 +307,59 @@ class Knob extends React.Component {
     ctx.stroke();
   }
 
-  renderCentre = () => {
-    if (this.props.displayInput) {
+  renderCenter = () => {
+    const {
+      displayCustom,
+      displayInput,
+      disableTextInput,
+      readOnly,
+      value,
+    } = this.props;
+
+    if (displayInput) {
       return (
         <input
           style={this.inputStyle()}
           type="text"
-          value={this.props.value}
+          value={value}
           onChange={this.handleTextInput}
           onKeyDown={this.handleArrowKey}
-          readOnly={this.props.readOnly || this.props.disableTextInput}
+          readOnly={readOnly || disableTextInput}
         />
       );
-    } else if (this.props.displayCustom && typeof this.props.displayCustom === 'function') {
-      return this.props.displayCustom();
+    } else if (displayCustom && typeof displayCustom === 'function') {
+      return displayCustom();
     }
     return null;
   };
 
-  render = () => (
-    <div
-      style={{ width: this.w, height: this.h, display: 'inline-block' }}
-      onWheel={this.props.readOnly || this.props.disableMouseWheel ? null : this.handleWheel}
-    >
-      <canvas
-        ref={(ref) => { this.canvasRef = ref; }}
-        style={{ width: '100%', height: '100%' }}
-        onMouseDown={this.props.readOnly ? null : this.handleMouseDown}
-        title={this.props.title ? `${this.props.title}: ${this.props.value}` : this.props.value}
-      />
-      {this.renderCentre()}
-    </div>
-  );
+  render() {
+    const {
+      canvasClassName,
+      className,
+      disableMouseWheel,
+      readOnly,
+      title,
+      value,
+    } = this.props;
+
+    return (
+      <div
+        className={className}
+        style={{ width: this.w, height: this.h, display: 'inline-block' }}
+        onWheel={readOnly || disableMouseWheel ? null : this.handleWheel}
+      >
+        <canvas
+          ref={(ref) => { this.canvasRef = ref; }}
+          className={canvasClassName}
+          style={{ width: '100%', height: '100%' }}
+          onMouseDown={readOnly ? null : this.handleMouseDown}
+          title={title ? `${title}: ${value}` : value}
+        />
+        {this.renderCenter()}
+      </div>
+    );
+  }
 }
 
 export default Knob;
