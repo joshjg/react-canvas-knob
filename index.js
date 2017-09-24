@@ -215,12 +215,12 @@ var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) 
     };
 
     _this.renderCenter = function () {
-      var _this$props = _this.props;
-      var displayCustom = _this$props.displayCustom;
-      var displayInput = _this$props.displayInput;
-      var disableTextInput = _this$props.disableTextInput;
-      var readOnly = _this$props.readOnly;
-      var value = _this$props.value;
+      var _this$props = _this.props,
+          displayCustom = _this$props.displayCustom,
+          displayInput = _this$props.displayInput,
+          disableTextInput = _this$props.disableTextInput,
+          readOnly = _this$props.readOnly,
+          value = _this$props.value;
 
 
       if (displayInput) {
@@ -310,13 +310,13 @@ var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) 
     value: function render() {
       var _this2 = this;
 
-      var _props = this.props;
-      var canvasClassName = _props.canvasClassName;
-      var className = _props.className;
-      var disableMouseWheel = _props.disableMouseWheel;
-      var readOnly = _props.readOnly;
-      var title = _props.title;
-      var value = _props.value;
+      var _props = this.props,
+          canvasClassName = _props.canvasClassName,
+          className = _props.className,
+          disableMouseWheel = _props.disableMouseWheel,
+          readOnly = _props.readOnly,
+          title = _props.title,
+          value = _props.value;
 
 
       return _react3.default.createElement(
