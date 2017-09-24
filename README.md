@@ -60,6 +60,9 @@ class MyComponent extends React.Component {
 |`disableMouseWheel`|disable changes on mouse wheel use|`false`|
 |`title`|adds title attribute to the wheel|`value`|
 
+## Contributing
+* Make changes to Knob.js, then run `npm run babel` to transpile.
+
 ## Todo
 - [ ] Fix for height > width condition
 - [ ] Port `displayPrevious` feature

@@ -82,12 +82,12 @@ class Knob extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProp) {
-    if (nextProp.width && this.w !== nextProp.width) {
-      this.w = nextProp.width;
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.width && this.w !== nextProps.width) {
+      this.w = nextProps.width;
     }
-    if (nextProp.height && this.h !== nextProp.height) {
-      this.h = nextProp.height;
+    if (nextProps.height && this.h !== nextProps.height) {
+      this.h = nextProps.height;
     }
   }
 

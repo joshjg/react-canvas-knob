@@ -219,12 +219,12 @@ var Knob = function (_React$Component) {
     }
   }, {
     key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProp) {
-      if (nextProp.width && this.w !== nextProp.width) {
-        this.w = nextProp.width;
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.width && this.w !== nextProps.width) {
+        this.w = nextProps.width;
       }
-      if (nextProp.height && this.h !== nextProp.height) {
-        this.h = nextProp.height;
+      if (nextProps.height && this.h !== nextProps.height) {
+        this.h = nextProps.height;
       }
     }
   }, {

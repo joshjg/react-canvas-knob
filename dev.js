@@ -5,20 +5,16 @@ import Knob from './Knob';
 class Root extends React.Component {
   static responsiveWidths = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 
-  constructor(props) {
-    super(props);
-    this.handleUpdateResponsiveWidth = this.handleUpdateResponsiveWidth.bind(this);
+  state = {
+    value: 10,
+    responsiveWidth: Root.responsiveWidths[Math.floor(Math.random() * Root.responsiveWidths.length)],
+  };
 
-    this.state = {
-      value: 10,
-      responsiveWidth: Root.responsiveWidths[Math.floor(Math.random() * Root.responsiveWidths.length)],
-    };
-  }
   handleChange = (newValue) => {
     this.setState({ value: newValue });
   };
 
-  handleUpdateResponsiveWidth() {
+  handleUpdateResponsiveWidth = () => {
     this.setState({
       responsiveWidth: Root.responsiveWidths[Math.floor(Math.random() * Root.responsiveWidths.length)],
     });
