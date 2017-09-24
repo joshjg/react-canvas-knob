@@ -1,3 +1,9 @@
+# 0.5.0
+* HiDPI scaling support
+* Changing the width/height props after mount now updates the component
+* `onChangeEnd` handler now optional
+* Added `className` and `canvasClassName` props
+
 # 0.4.0
 * Added `displayCustom`, which allows ability to render custom component in the centre of the knob, if `displayInput` is set to false.
 * Added prop to disable mouse wheel action.
