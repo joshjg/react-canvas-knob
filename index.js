@@ -218,6 +218,16 @@ var Knob = function (_React$Component) {
       }
     }
   }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProp) {
+      if (nextProp.width && this.w !== nextProp.width) {
+        this.w = nextProp.width;
+      }
+      if (nextProp.height && this.h !== nextProp.height) {
+        this.h = nextProp.height;
+      }
+    }
+  }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate() {
       this.drawCanvas();
