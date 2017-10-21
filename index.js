@@ -30,22 +30,43 @@ var Knob = function (_React$Component) {
       v = parseFloat(v); // Addition: allows units to be used in value
       var startAngle = void 0;
       var endAngle = void 0;
+      var connectStartAngle = void 0;
+      var connectEndAngle = void 0;
       var angle = !_this.props.log ? (v - _this.props.min) * _this.angleArc / (_this.props.max - _this.props.min) : Math.log(Math.pow(v / _this.props.min, _this.angleArc)) / Math.log(_this.props.max / _this.props.min);
       if (!_this.props.clockwise) {
         startAngle = _this.endAngle + 0.00001;
         endAngle = startAngle - angle - 0.00001;
+        connectStartAngle = _this.connectEndAngle + 0.00001;
+        connectEndAngle = connectStartAngle - angle - 0.00001;
       } else {
         startAngle = _this.startAngle - 0.00001;
         endAngle = startAngle + angle + 0.00001;
+        connectStartAngle = _this.connectStartAngle - 0.00001;
+        connectEndAngle = connectStartAngle + angle + 0.00001;
       }
       if (_this.props.cursor) {
-        startAngle = endAngle - _this.cursorExt;
-        endAngle += _this.cursorExt;
+        var cursorExt = _this.props.cursor === true ? 0.3 : _this.props.cursor / 100;
+        startAngle = endAngle - cursorExt;
+        endAngle += cursorExt;
+      }
+      if (_this.props.cursorTwo) {
+        var cursorExt = _this.props.cursorTwo === true ? 0.3 : _this.props.cursorTwo / 100;
+        startAngle = endAngle - cursorExt;
+        endAngle += cursorExt;
+      }
+      if (_this.props.connector) {
+        var multiplier = _this.props.angleArc / (_this.props.max-_this.props.min) - 1;
+        var length = multiplier * (_this.props.valueTwo-_this.props.value);
+        var connector = length / 100;
+        connectStartAngle = connectEndAngle - connector;
+        connectEndAngle += connector;
       }
       return {
         startAngle: startAngle,
         endAngle: endAngle,
-        acw: !_this.props.clockwise && !_this.props.cursor
+        connectStartAngle: connectStartAngle,
+        connectEndAngle: connectEndAngle,
+        acw: !_this.props.clockwise && !_this.props.cursor && !_this.props.cursorTwo
       };
     };
 
@@ -201,6 +222,7 @@ var Knob = function (_React$Component) {
 
     var dimension = 200; // default if neither width or height given
       if (_this.props.width) {
+        dimension = _this.props.width
         if (_this.props.width <= 1) { // Addition: treats any number 1 or under as a percentage of window dimensions
             dimension = window.innerWidth * _this.props.width;
         }
@@ -210,11 +232,12 @@ var Knob = function (_React$Component) {
       }
     _this.w = dimension;
     _this.h = _this.w;
-    _this.cursorExt = _this.props.cursor === true ? 0.3 : _this.props.cursor / 100;
     _this.angleArc = _this.props.angleArc * Math.PI / 180;
     _this.angleOffset = _this.props.angleOffset * Math.PI / 180;
     _this.startAngle = 1.5 * Math.PI + _this.angleOffset;
     _this.endAngle = 1.5 * Math.PI + _this.angleOffset + _this.angleArc;
+    _this.connectStartAngle = 1.5 * Math.PI + _this.angleOffset;
+    _this.connectEndAngle = 1.5 * Math.PI + _this.angleOffset + _this.angleArc;
     _this.digits = Math.max(String(Math.abs(_this.props.min)).length, String(Math.abs(_this.props.max)).length, 2) + 2;
     return _this;
   }
@@ -253,6 +276,19 @@ var Knob = function (_React$Component) {
       ctx.strokeStyle = this.props.bgColor;
       ctx.arc(this.xy, this.xy, this.radius, this.endAngle - 0.00001, this.startAngle + 0.00001, true);
       ctx.stroke();
+      // connector
+      var average = (this.props.valueTwo + this.props.value)/2;
+      var c = this.getArcToValue(average);
+      ctx.beginPath();
+      ctx.strokeStyle = this.props.connectorColor;
+      ctx.arc(this.xy, this.xy, this.radius, c.connectStartAngle, c.connectEndAngle, c.acw);
+      ctx.stroke();
+      // second cursor
+      var b = this.getArcToValue(this.props.valueTwo);
+      ctx.beginPath();
+      ctx.strokeStyle = this.props.fgColorTwo;
+      ctx.arc(this.xy, this.xy, this.radius, b.startAngle, b.endAngle, b.acw);
+      ctx.stroke();
       // foreground arc
       var a = this.getArcToValue(this.props.value);
       ctx.beginPath();
@@ -266,7 +302,8 @@ var Knob = function (_React$Component) {
 }(_react2.default.Component);
 
 Knob.propTypes = {
-  value: _react2.default.PropTypes.number.isRequired,
+  value: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number,_react2.default.PropTypes.string]).isRequired,
+  valueTwo: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number,_react2.default.PropTypes.string]),
   onChange: _react2.default.PropTypes.func.isRequired,
   onChangeEnd: _react2.default.PropTypes.func,
   min: _react2.default.PropTypes.number,
@@ -279,11 +316,15 @@ Knob.propTypes = {
   lineCap: _react2.default.PropTypes.oneOf(['butt', 'round']),
   bgColor: _react2.default.PropTypes.string,
   fgColor: _react2.default.PropTypes.string,
+  fgColorTwo: _react2.default.PropTypes.string,
   inputColor: _react2.default.PropTypes.string,
   font: _react2.default.PropTypes.string,
   fontWeight: _react2.default.PropTypes.string,
   clockwise: _react2.default.PropTypes.bool,
   cursor: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number, _react2.default.PropTypes.bool]),
+  cursorTwo: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number, _react2.default.PropTypes.bool]),
+  connector: _react2.default.PropTypes.bool,
+  connectorColor: _react2.default.PropTypes.string,
   stopper: _react2.default.PropTypes.bool,
   readOnly: _react2.default.PropTypes.bool,
   disableTextInput: _react2.default.PropTypes.bool,
@@ -310,6 +351,9 @@ Knob.defaultProps = {
   fontWeight: 'bold',
   clockwise: true,
   cursor: false,
+  cursorTwo: false,
+  connector: false,
+  connectorColor: '#FFF',
   stopper: true,
   readOnly: false,
   disableTextInput: false,
