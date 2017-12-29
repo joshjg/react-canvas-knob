@@ -1,40 +1,44 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class Knob extends React.Component {
   static propTypes = {
-    value: React.PropTypes.number.isRequired,
-    onChange: React.PropTypes.func.isRequired,
-    onChangeEnd: React.PropTypes.func,
-    min: React.PropTypes.number,
-    max: React.PropTypes.number,
-    step: React.PropTypes.number,
-    log: React.PropTypes.bool,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    thickness: React.PropTypes.number,
-    lineCap: React.PropTypes.oneOf(['butt', 'round']),
-    bgColor: React.PropTypes.string,
-    fgColor: React.PropTypes.string,
-    inputColor: React.PropTypes.string,
-    font: React.PropTypes.string,
-    fontWeight: React.PropTypes.string,
-    clockwise: React.PropTypes.bool,
-    cursor: React.PropTypes.oneOfType([
-      React.PropTypes.number,
-      React.PropTypes.bool,
+    value: PropTypes.number.isRequired,
+    onChange: PropTypes.func.isRequired,
+    onChangeEnd: PropTypes.func,
+    min: PropTypes.number,
+    max: PropTypes.number,
+    step: PropTypes.number,
+    log: PropTypes.bool,
+    width: PropTypes.number,
+    height: PropTypes.number,
+    thickness: PropTypes.number,
+    lineCap: PropTypes.oneOf(['butt', 'round']),
+    bgColor: PropTypes.string,
+    fgColor: PropTypes.string,
+    inputColor: PropTypes.string,
+    font: PropTypes.string,
+    fontWeight: PropTypes.string,
+    clockwise: PropTypes.bool,
+    cursor: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.bool,
     ]),
-    stopper: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool,
-    disableTextInput: React.PropTypes.bool,
-    displayInput: React.PropTypes.bool,
-    displayCustom: React.PropTypes.func,
-    angleArc: React.PropTypes.number,
-    angleOffset: React.PropTypes.number,
-    disableMouseWheel: React.PropTypes.bool,
-    title: React.PropTypes.string,
+    stopper: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    disableTextInput: PropTypes.bool,
+    displayInput: PropTypes.bool,
+    displayCustom: PropTypes.func,
+    angleArc: PropTypes.number,
+    angleOffset: PropTypes.number,
+    disableMouseWheel: PropTypes.bool,
+    title: PropTypes.string,
+    className: PropTypes.string,
+    canvasClassName: PropTypes.string,
   };
 
   static defaultProps = {
+    onChangeEnd: () => {},
     min: 0,
     max: 100,
     step: 1,
@@ -57,6 +61,8 @@ class Knob extends React.Component {
     angleArc: 360,
     angleOffset: 0,
     disableMouseWheel: false,
+    className: null,
+    canvasClassName: null,
   };
 
   constructor(props) {
@@ -79,6 +85,15 @@ class Knob extends React.Component {
     this.drawCanvas();
     if (!this.props.readOnly) {
       this.canvasRef.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.width && this.w !== nextProps.width) {
+      this.w = nextProps.width;
+    }
+    if (nextProps.height && this.h !== nextProps.height) {
+      this.h = nextProps.height;
     }
   }
 
@@ -112,6 +127,15 @@ class Knob extends React.Component {
       endAngle,
       acw: !this.props.clockwise && !this.props.cursor,
     };
+  };
+
+  // Calculate ratio to scale canvas to avoid blurriness on HiDPI devices
+  getCanvasScale = (ctx) => {
+    const devicePixelRatio = window.devicePixelRatio ||
+      window.screen.deviceXDPI / window.screen.logicalXDPI || // IE10
+      1;
+    const backingStoreRatio = ctx.webkitBackingStorePixelRatio || 1;
+    return devicePixelRatio / backingStoreRatio;
   };
 
   coerceToStep = (v) => {
@@ -176,7 +200,7 @@ class Knob extends React.Component {
   };
 
   handleTouchEnd = (e) => {
-    this.props.onChangeEnd(this.eventToValue(e.changedTouches[this.touchIndex]));
+    this.props.onChangeEnd(this.eventToValue(e));
     document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('touchend', this.handleTouchEnd);
     document.removeEventListener('touchcancel', this.handleTouchEnd);
@@ -246,9 +270,11 @@ class Knob extends React.Component {
   });
 
   drawCanvas() {
-    this.canvasRef.width = this.w; // clears the canvas
-    this.canvasRef.height = this.h;
     const ctx = this.canvasRef.getContext('2d');
+    const scale = this.getCanvasScale(ctx);
+    this.canvasRef.width = this.w * scale; // clears the canvas
+    this.canvasRef.height = this.h * scale;
+    ctx.scale(scale, scale);
     this.xy = this.w / 2; // coordinates of canvas center
     this.lineWidth = this.xy * this.props.thickness;
     this.radius = this.xy - (this.lineWidth / 2);
@@ -281,38 +307,59 @@ class Knob extends React.Component {
     ctx.stroke();
   }
 
-  renderCentre = () => {
-    if (this.props.displayInput) {
+  renderCenter = () => {
+    const {
+      displayCustom,
+      displayInput,
+      disableTextInput,
+      readOnly,
+      value,
+    } = this.props;
+
+    if (displayInput) {
       return (
         <input
           style={this.inputStyle()}
           type="text"
-          value={this.props.value}
+          value={value}
           onChange={this.handleTextInput}
           onKeyDown={this.handleArrowKey}
-          readOnly={this.props.readOnly || this.props.disableTextInput}
+          readOnly={readOnly || disableTextInput}
         />
       );
-    } else if (this.props.displayCustom && typeof this.props.displayCustom === 'function') {
-      return this.props.displayCustom();
+    } else if (displayCustom && typeof displayCustom === 'function') {
+      return displayCustom();
     }
     return null;
   };
 
-  render = () => (
-    <div
-      style={{ width: this.w, height: this.h, display: 'inline-block' }}
-      onWheel={this.props.readOnly || this.props.disableMouseWheel ? null : this.handleWheel}
-    >
-      <canvas
-        ref={(ref) => { this.canvasRef = ref; }}
-        style={{ width: '100%', height: '100%' }}
-        onMouseDown={this.props.readOnly ? null : this.handleMouseDown}
-        title={this.props.title ? `${this.props.title}: ${this.props.value}` : this.props.value}
-      />
-      {this.renderCentre()}
-    </div>
-  );
+  render() {
+    const {
+      canvasClassName,
+      className,
+      disableMouseWheel,
+      readOnly,
+      title,
+      value,
+    } = this.props;
+
+    return (
+      <div
+        className={className}
+        style={{ width: this.w, height: this.h, display: 'inline-block' }}
+        onWheel={readOnly || disableMouseWheel ? null : this.handleWheel}
+      >
+        <canvas
+          ref={(ref) => { this.canvasRef = ref; }}
+          className={canvasClassName}
+          style={{ width: '100%', height: '100%' }}
+          onMouseDown={readOnly ? null : this.handleMouseDown}
+          title={title ? `${title}: ${value}` : value}
+        />
+        {this.renderCenter()}
+      </div>
+    );
+  }
 }
 
 export default Knob;

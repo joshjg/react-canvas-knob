@@ -4,11 +4,29 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _redboxReact2 = require('redbox-react');
+
+var _redboxReact3 = _interopRequireDefault(_redboxReact2);
+
+var _reactTransformCatchErrors3 = require('react-transform-catch-errors');
+
+var _reactTransformCatchErrors4 = _interopRequireDefault(_reactTransformCatchErrors3);
+
+var _react2 = require('react');
+
+var _react3 = _interopRequireDefault(_react2);
+
+var _reactTransformHmr3 = require('react-transform-hmr');
+
+var _reactTransformHmr4 = _interopRequireDefault(_reactTransformHmr3);
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = require('react');
+var _class, _temp;
 
-var _react2 = _interopRequireDefault(_react);
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -18,7 +36,33 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Knob = function (_React$Component) {
+var _components = {
+  Knob: {
+    displayName: 'Knob'
+  }
+};
+
+var _reactTransformHmr2 = (0, _reactTransformHmr4.default)({
+  filename: 'Knob.js',
+  components: _components,
+  locals: [module],
+  imports: [_react3.default]
+});
+
+var _reactTransformCatchErrors2 = (0, _reactTransformCatchErrors4.default)({
+  filename: 'Knob.js',
+  components: _components,
+  locals: [],
+  imports: [_react3.default, _redboxReact3.default]
+});
+
+function _wrapComponent(id) {
+  return function (Component) {
+    return _reactTransformHmr2(_reactTransformCatchErrors2(Component, id), id);
+  };
+}
+
+var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) {
   _inherits(Knob, _React$Component);
 
   function Knob(props) {
@@ -68,6 +112,13 @@ var Knob = function (_React$Component) {
         connectEndAngle: connectEndAngle,
         acw: !_this.props.clockwise && !_this.props.cursor && !_this.props.cursorTwo
       };
+    };
+
+    _this.getCanvasScale = function (ctx) {
+      var devicePixelRatio = window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI || // IE10
+      1;
+      var backingStoreRatio = ctx.webkitBackingStorePixelRatio || 1;
+      return devicePixelRatio / backingStoreRatio;
     };
 
     _this.coerceToStep = function (v) {
@@ -185,30 +236,38 @@ var Knob = function (_React$Component) {
       };
     };
 
-    _this.renderCentre = function () {
-      if (_this.props.displayInput) {
-        return _react2.default.createElement('input', {
+    _this.renderCenter = function () {
+      var _this$props = _this.props,
+          displayCustom = _this$props.displayCustom,
+          displayInput = _this$props.displayInput,
+          disableTextInput = _this$props.disableTextInput,
+          readOnly = _this$props.readOnly,
+          value = _this$props.value;
+
+
+      if (displayInput) {
+        return _react3.default.createElement('input', {
           style: _this.inputStyle(),
           type: 'text',
-          value: _this.props.value,
+          value: value,
           onChange: _this.handleTextInput,
           onKeyDown: _this.handleArrowKey,
-          readOnly: _this.props.readOnly || _this.props.disableTextInput
+          readOnly: readOnly || disableTextInput
         });
-      } else if (_this.props.displayCustom && typeof _this.props.displayCustom === 'function') {
-        return _this.props.displayCustom();
+      } else if (displayCustom && typeof displayCustom === 'function') {
+        return displayCustom();
       }
       return null;
     };
 
     _this.render = function () {
-      return _react2.default.createElement(
+      return _react2.createElement(
         'div',
         {
           style: { width: _this.w, height: _this.h, display: 'inline-block' },
           onWheel: _this.props.readOnly || _this.props.disableMouseWheel ? null : _this.handleWheel
         },
-        _react2.default.createElement('canvas', {
+        _react2.createElement('canvas', {
           ref: function ref(_ref) {
             _this.canvasRef = _ref;
           },
@@ -216,7 +275,7 @@ var Knob = function (_React$Component) {
           onMouseDown: _this.props.readOnly ? null : _this.handleMouseDown,
           title: _this.props.title ? _this.props.title + ': ' + _this.props.value : _this.props.value
         }),
-        _this.renderCentre()
+        _this.renderCenter()
       );
     };
 
@@ -251,6 +310,16 @@ var Knob = function (_React$Component) {
       }
     }
   }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      if (nextProps.width && this.w !== nextProps.width) {
+        this.w = nextProps.width;
+      }
+      if (nextProps.height && this.h !== nextProps.height) {
+        this.h = nextProps.height;
+      }
+    }
+  }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate() {
       this.drawCanvas();
@@ -260,12 +329,17 @@ var Knob = function (_React$Component) {
     value: function componentWillUnmount() {
       this.canvasRef.removeEventListener('touchstart', this.handleTouchStart);
     }
+
+    // Calculate ratio to scale canvas to avoid blurriness on HiDPI devices
+
   }, {
     key: 'drawCanvas',
     value: function drawCanvas() {
-      this.canvasRef.width = this.w; // clears the canvas
-      this.canvasRef.height = this.h;
       var ctx = this.canvasRef.getContext('2d');
+      var scale = this.getCanvasScale(ctx);
+      this.canvasRef.width = this.w * scale; // clears the canvas
+      this.canvasRef.height = this.h * scale;
+      ctx.scale(scale, scale);
       this.xy = this.w / 2; // coordinates of canvas center
       this.lineWidth = this.xy * this.props.thickness;
       this.radius = this.xy - this.lineWidth / 2;
@@ -296,46 +370,79 @@ var Knob = function (_React$Component) {
       ctx.arc(this.xy, this.xy, this.radius, a.startAngle, a.endAngle, a.acw);
       ctx.stroke();
     }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      var _props = this.props,
+          canvasClassName = _props.canvasClassName,
+          className = _props.className,
+          disableMouseWheel = _props.disableMouseWheel,
+          readOnly = _props.readOnly,
+          title = _props.title,
+          value = _props.value;
+
+
+      return _react3.default.createElement(
+        'div',
+        {
+          className: className,
+          style: { width: this.w, height: this.h, display: 'inline-block' },
+          onWheel: readOnly || disableMouseWheel ? null : this.handleWheel
+        },
+        _react3.default.createElement('canvas', {
+          ref: function ref(_ref) {
+            _this2.canvasRef = _ref;
+          },
+          className: canvasClassName,
+          style: { width: '100%', height: '100%' },
+          onMouseDown: readOnly ? null : this.handleMouseDown,
+          title: title ? title + ': ' + value : value
+        }),
+        this.renderCenter()
+      );
+    }
   }]);
 
   return Knob;
-}(_react2.default.Component);
-
-Knob.propTypes = {
-  value: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number,_react2.default.PropTypes.string]).isRequired,
-  valueTwo: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number,_react2.default.PropTypes.string]),
-  onChange: _react2.default.PropTypes.func.isRequired,
-  onChangeEnd: _react2.default.PropTypes.func,
-  min: _react2.default.PropTypes.number,
-  max: _react2.default.PropTypes.number,
-  step: _react2.default.PropTypes.number,
-  log: _react2.default.PropTypes.bool,
-  width: _react2.default.PropTypes.number,
-  height: _react2.default.PropTypes.number,
-  thickness: _react2.default.PropTypes.number,
-  lineCap: _react2.default.PropTypes.oneOf(['butt', 'round']),
-  bgColor: _react2.default.PropTypes.string,
-  fgColor: _react2.default.PropTypes.string,
-  fgColorTwo: _react2.default.PropTypes.string,
-  inputColor: _react2.default.PropTypes.string,
-  font: _react2.default.PropTypes.string,
-  fontWeight: _react2.default.PropTypes.string,
-  clockwise: _react2.default.PropTypes.bool,
-  cursor: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number, _react2.default.PropTypes.bool]),
-  cursorTwo: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.number, _react2.default.PropTypes.bool]),
-  connector: _react2.default.PropTypes.bool,
-  connectorColor: _react2.default.PropTypes.string,
-  stopper: _react2.default.PropTypes.bool,
-  readOnly: _react2.default.PropTypes.bool,
-  disableTextInput: _react2.default.PropTypes.bool,
-  displayInput: _react2.default.PropTypes.bool,
-  displayCustom: _react2.default.PropTypes.func,
-  angleArc: _react2.default.PropTypes.number,
-  angleOffset: _react2.default.PropTypes.number,
-  disableMouseWheel: _react2.default.PropTypes.bool,
-  title: _react2.default.PropTypes.string
-};
-Knob.defaultProps = {
+}(_react3.default.Component), _class.propTypes = {
+  value: _propTypes2.default.number.isRequired,
+  valueTwo: _propTypes2.default.oneOfType([_propTypes2.default.number,_propTypes2.default.string]),
+  onChange: _propTypes2.default.func.isRequired,
+  onChangeEnd: _propTypes2.default.func,
+  min: _propTypes2.default.number,
+  max: _propTypes2.default.number,
+  step: _propTypes2.default.number,
+  log: _propTypes2.default.bool,
+  width: _propTypes2.default.number,
+  height: _propTypes2.default.number,
+  thickness: _propTypes2.default.number,
+  lineCap: _propTypes2.default.oneOf(['butt', 'round']),
+  bgColor: _propTypes2.default.string,
+  fgColor: _propTypes2.default.string,
+  fgColorTwo: _propTypes2.default.string,
+  inputColor: _propTypes2.default.string,
+  font: _propTypes2.default.string,
+  fontWeight: _propTypes2.default.string,
+  clockwise: _propTypes2.default.bool,
+  cursor: _propTypes2.default.oneOfType([_propTypes2.default.number, _propTypes2.default.bool]),
+  cursorTwo: _propTypes2.default.oneOfType([_propTypes2.default.number, _propTypes2.default.bool]),
+  connector: _propTypes2.default.bool,
+  connectorColor: _propTypes2.default.string,
+  stopper: _propTypes2.default.bool,
+  readOnly: _propTypes2.default.bool,
+  disableTextInput: _propTypes2.default.bool,
+  displayInput: _propTypes2.default.bool,
+  displayCustom: _propTypes2.default.func,
+  angleArc: _propTypes2.default.number,
+  angleOffset: _propTypes2.default.number,
+  disableMouseWheel: _propTypes2.default.bool,
+  title: _propTypes2.default.string,
+  className: _propTypes2.default.string,
+  canvasClassName: _propTypes2.default.string
+}, _class.defaultProps = {
+  onChangeEnd: function onChangeEnd() {},
   min: 0,
   max: 100,
   step: 1,
@@ -360,6 +467,9 @@ Knob.defaultProps = {
   displayInput: true,
   angleArc: 360,
   angleOffset: 0,
-  disableMouseWheel: false
-};
+  disableMouseWheel: false,
+  className: null,
+  canvasClassName: null
+}, _temp));
+
 exports.default = Knob;

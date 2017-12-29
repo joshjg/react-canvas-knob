@@ -12,13 +12,12 @@ import React from 'react';
 import Knob from 'react-canvas-knob';
 
 class MyComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {value: 50};
-  }
+  state = {value: 50};
+
   handleChange = (newValue) => {
     this.setState({value: newValue});
   };
+
   render() {
     return (
       <Knob
@@ -59,6 +58,11 @@ class MyComponent extends React.Component {
 |`angleOffset`|starting angle in degrees|`0`|
 |`disableMouseWheel`|disable changes on mouse wheel use|`false`|
 |`title`|adds title attribute to the wheel|`value`|
+|`className`|custom className to be applied to the container element|`null`|
+|`canvasClassName`|custom className to be applied to the canvas element|`null`|
+
+## Contributing
+* Make changes to Knob.js, then run `npm run babel` to transpile.
 
 ## Todo
 - [ ] Fix for height > width condition
