@@ -200,7 +200,7 @@ class Knob extends React.Component {
   };
 
   handleTouchEnd = (e) => {
-    this.props.onChangeEnd(this.eventToValue(e));
+    this.props.onChangeEnd(this.eventToValue(e.changedTouches[this.touchIndex]));
     document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('touchend', this.handleTouchEnd);
     document.removeEventListener('touchcancel', this.handleTouchEnd);
