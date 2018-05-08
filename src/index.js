@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 class Knob extends React.Component {
   static propTypes = {
-    value: PropTypes.number.isRequired,
+    value: PropTypes.number,
     onChange: PropTypes.func.isRequired,
     onChangeEnd: PropTypes.func,
     min: PropTypes.number,
@@ -23,6 +23,11 @@ class Knob extends React.Component {
     cursor: PropTypes.oneOfType([
       PropTypes.number,
       PropTypes.bool,
+      PropTypes.array,
+    ]),
+    connector: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.object,
     ]),
     stopper: PropTypes.bool,
     readOnly: PropTypes.bool,
@@ -54,6 +59,9 @@ class Knob extends React.Component {
     fontWeight: 'bold',
     clockwise: true,
     cursor: false,
+    cursorTwo: false,
+    connector: false,
+    connectorColor: '#FFF',
     stopper: true,
     readOnly: false,
     disableTextInput: false,
@@ -69,11 +77,13 @@ class Knob extends React.Component {
     super(props);
     this.w = this.props.width || 200;
     this.h = this.props.height || this.w;
-    this.cursorExt = this.props.cursor === true ? 0.3 : this.props.cursor / 100;
+    // this.cursorExt = this.props.cursor === true ? 0.3 : this.props.cursor / 100;
     this.angleArc = this.props.angleArc * Math.PI / 180;
     this.angleOffset = this.props.angleOffset * Math.PI / 180;
     this.startAngle = (1.5 * Math.PI) + this.angleOffset;
     this.endAngle = (1.5 * Math.PI) + this.angleOffset + this.angleArc;
+    this.connectStartAngle = 1.5 * Math.PI + this.angleOffset;
+    this.connectEndAngle = 1.5 * Math.PI + this.angleOffset + this.angleArc;
     this.digits = Math.max(
       String(Math.abs(this.props.min)).length,
       String(Math.abs(this.props.max)).length,
@@ -105,27 +115,43 @@ class Knob extends React.Component {
     this.canvasRef.removeEventListener('touchstart', this.handleTouchStart);
   }
 
-  getArcToValue = (v) => {
-    let startAngle;
-    let endAngle;
+  getArcToValue = (v, type='knob', cursor) => {
+    let startAngle,
+        endAngle,
+        cursorExt,
+        connectStartAngle,
+        connectEndAngle;
     const angle = !this.props.log
     ? ((v - this.props.min) * this.angleArc) / (this.props.max - this.props.min)
     : Math.log(Math.pow((v / this.props.min), this.angleArc)) / Math.log(this.props.max / this.props.min);
     if (!this.props.clockwise) {
       startAngle = this.endAngle + 0.00001;
       endAngle = startAngle - angle - 0.00001;
+      connectStartAngle = this.connectEndAngle + 0.00001;
+      connectEndAngle = connectStartAngle - angle - 0.00001;
     } else {
       startAngle = this.startAngle - 0.00001;
       endAngle = startAngle + angle + 0.00001;
+      connectStartAngle = this.connectStartAngle - 0.00001;
+      connectEndAngle = connectStartAngle + angle + 0.00001;
     }
-    if (this.props.cursor) {
-      startAngle = endAngle - this.cursorExt;
-      endAngle += this.cursorExt;
+
+    if (this.props.connector && this.props.cursor.length > 1 && type === 'connector') {
+      var multiplier = this.props.angleArc / (this.props.max - this.props.min) - 1;
+      var length = multiplier * (this.props.cursor[1].value - this.props.cursor[0].value);
+      var connector = length / 100;
+      startAngle = connectEndAngle - connector;
+      endAngle += connector;
+    } else if (this.props.cursor && type === 'cursor') {
+      cursorExt = cursor.widthMultiplier / 100;
+      startAngle = endAngle - cursorExt;
+      endAngle += cursorExt;
     }
+    
     return {
       startAngle,
       endAngle,
-      acw: !this.props.clockwise && !this.props.cursor,
+      acw: !this.props.clockwise && !this.props.cursor
     };
   };
 
@@ -292,19 +318,43 @@ class Knob extends React.Component {
       true
     );
     ctx.stroke();
-    // foreground arc
-    const a = this.getArcToValue(this.props.value);
-    ctx.beginPath();
-    ctx.strokeStyle = this.props.fgColor;
-    ctx.arc(
-      this.xy,
-      this.xy,
-      this.radius,
-      a.startAngle,
-      a.endAngle,
-      a.acw
-    );
-    ctx.stroke();
+    // connector
+    if (this.props.connector && this.props.cursor && this.props.cursor.length > 1) {
+      const average = (this.props.cursor[0].value + this.props.cursor[1].value) / 2;
+      const c = this.getArcToValue(average, 'connector');
+      ctx.beginPath();
+      ctx.strokeStyle = this.props.connector.color;
+      ctx.lineWidth = this.props.connector.width || this.lineWidth;
+      ctx.arc(this.xy, this.xy, this.radius, c.startAngle, c.endAngle, c.acw);
+      ctx.stroke();
+    }
+    // cursors
+    if (this.props.cursor && this.props.cursor.length > 0) {
+      for (let i = this.props.cursor.length - 1; i >= 0; i--) {
+        const cursor = this.props.cursor[i];
+        const value = cursor.value ? cursor.value : this.props.value;
+        const b = this.getArcToValue(value, 'cursor', cursor);
+        ctx.beginPath();
+        ctx.strokeStyle = this.props.cursor[i].color || this.props.fgColor;
+        ctx.lineWidth = this.props.cursor[i].widthMultiplier ? this.lineWidth * this.props.cursor[i].widthMultiplier : this.lineWidth;
+        ctx.arc(this.xy, this.xy, this.radius, b.startAngle, b.endAngle, b.acw);
+        ctx.stroke();
+      }
+    } else if (this.props.cursor) {
+      // foreground arc
+      const a = this.getArcToValue(this.props.value);
+      ctx.beginPath();
+      ctx.strokeStyle = this.props.fgColor;
+      ctx.arc(
+        this.xy,
+        this.xy,
+        this.radius,
+        a.startAngle,
+        a.endAngle,
+        a.acw
+      );
+      ctx.stroke();
+    }
   }
 
   renderCenter = () => {
