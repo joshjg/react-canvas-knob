@@ -4,25 +4,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _redboxReact2 = require('redbox-react');
-
-var _redboxReact3 = _interopRequireDefault(_redboxReact2);
-
-var _reactTransformCatchErrors3 = require('react-transform-catch-errors');
-
-var _reactTransformCatchErrors4 = _interopRequireDefault(_reactTransformCatchErrors3);
-
-var _react2 = require('react');
-
-var _react3 = _interopRequireDefault(_react2);
-
-var _reactTransformHmr3 = require('react-transform-hmr');
-
-var _reactTransformHmr4 = _interopRequireDefault(_reactTransformHmr3);
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _class, _temp;
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
 
 var _propTypes = require('prop-types');
 
@@ -36,33 +22,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _components = {
-  Knob: {
-    displayName: 'Knob'
-  }
-};
-
-var _reactTransformHmr2 = (0, _reactTransformHmr4.default)({
-  filename: 'Knob.js',
-  components: _components,
-  locals: [module],
-  imports: [_react3.default]
-});
-
-var _reactTransformCatchErrors2 = (0, _reactTransformCatchErrors4.default)({
-  filename: 'Knob.js',
-  components: _components,
-  locals: [],
-  imports: [_react3.default, _redboxReact3.default]
-});
-
-function _wrapComponent(id) {
-  return function (Component) {
-    return _reactTransformHmr2(_reactTransformCatchErrors2(Component, id), id);
-  };
-}
-
-var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) {
+var Knob = function (_React$Component) {
   _inherits(Knob, _React$Component);
 
   function Knob(props) {
@@ -224,7 +184,7 @@ var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) 
 
 
       if (displayInput) {
-        return _react3.default.createElement('input', {
+        return _react2.default.createElement('input', {
           style: _this.inputStyle(),
           type: 'text',
           value: value,
@@ -319,14 +279,14 @@ var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) 
           value = _props.value;
 
 
-      return _react3.default.createElement(
+      return _react2.default.createElement(
         'div',
         {
           className: className,
           style: { width: this.w, height: this.h, display: 'inline-block' },
           onWheel: readOnly || disableMouseWheel ? null : this.handleWheel
         },
-        _react3.default.createElement('canvas', {
+        _react2.default.createElement('canvas', {
           ref: function ref(_ref) {
             _this2.canvasRef = _ref;
           },
@@ -341,7 +301,9 @@ var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) 
   }]);
 
   return Knob;
-}(_react3.default.Component), _class.propTypes = {
+}(_react2.default.Component);
+
+Knob.propTypes = {
   value: _propTypes2.default.number.isRequired,
   onChange: _propTypes2.default.func.isRequired,
   onChangeEnd: _propTypes2.default.func,
@@ -371,7 +333,8 @@ var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) 
   title: _propTypes2.default.string,
   className: _propTypes2.default.string,
   canvasClassName: _propTypes2.default.string
-}, _class.defaultProps = {
+};
+Knob.defaultProps = {
   onChangeEnd: function onChangeEnd() {},
   min: 0,
   max: 100,
@@ -397,6 +360,5 @@ var Knob = _wrapComponent('Knob')((_temp = _class = function (_React$Component) 
   disableMouseWheel: false,
   className: null,
   canvasClassName: null
-}, _temp));
-
+};
 exports.default = Knob;
