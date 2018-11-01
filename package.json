@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --no-info",
-    "babel": "babel Knob.js -o index.js",
-    "build": "NODE_ENV=production babel Knob.js -o index.js",
+    "babel": "NODE_ENV=production babel Knob.js -o index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "git@github.com:joshjg/react-canvas-knob.git",
